@@ -79,11 +79,12 @@ class GlobalCodeAnalyzer {
             all_line_count += result->line_count;
             all_code_count += result->code_count;
         }
-        cout << "all file count: " << all_file_count << endl;
-        cout << "all line count: " << all_line_count << endl;
-        cout << "all code count: " << all_code_count << endl;
-        cout << "valid code rate: "
-             << static_cast<double>(all_code_count) / all_line_count << endl;
+        cout << "\nfiles: " << all_file_count << endl;
+        cout << "lines: " << all_line_count << endl;
+        cout << "codes: " << all_code_count << endl;
+        // cout << "rate: " << static_cast<double>(all_code_count) /
+        // all_line_count
+        //      << endl;
     }
 
     void global_analyze() {
@@ -103,26 +104,27 @@ class GlobalCodeAnalyzer {
                         }
 
                         if (fs::exists(entry) && fs::is_regular_file(entry)) {
-                            std::cout << entry.path().string() << std::endl;
+                            // std::cout << entry.path().string() << std::endl;
                             if (!path_filter(entry.path()) ||
                                 !path_filter(
                                     entry.path().filename().string()) ||
                                 !extension_filter(
                                     entry.path().extension().string())) {
-                                if (!path_filter(entry.path())) {
-                                    std::cout << "path_filter" << std::endl;
-                                }
-                                if (!path_filter(
-                                        entry.path().filename().string())) {
-                                    std::cout << "filename_filter" << std::endl;
-                                }
-                                if (!extension_filter(
-                                        entry.path().extension().string())) {
-                                    std::cout << "extension_filter"
-                                              << std::endl;
-                                }
+                                // if (!path_filter(entry.path())) {
+                                //     std::cout << "path_filter" << std::endl;
+                                // }
+                                // if (!path_filter(
+                                //         entry.path().filename().string())) {
+                                //     std::cout << "filename_filter" <<
+                                //     std::endl;
+                                // }
+                                // if (!extension_filter(
+                                //         entry.path().extension().string())) {
+                                //     std::cout << "extension_filter"
+                                //               << std::endl;
+                                // }
 
-                                std::cout << "continue" << std::endl;
+                                // std::cout << "continue" << std::endl;
                                 continue;
                             }
 
@@ -130,8 +132,8 @@ class GlobalCodeAnalyzer {
                                 _analyzer_->analyze(entry.path().string());
                             _global_result_ptr_->push_back(analysis_result);
                             analysis_result->statistics();
-                            std::cout << analysis_result->to_string()
-                                      << std::endl;
+                            // std::cout << analysis_result->to_string()
+                            //           << std::endl;
                         } else {
                             // 异常
                         }
@@ -145,7 +147,7 @@ class GlobalCodeAnalyzer {
                     auto analysis_result = _analyzer_->analyze(path.string());
                     _global_result_ptr_->push_back(analysis_result);
                     analysis_result->statistics();
-                    std::cout << analysis_result->to_string() << std::endl;
+                    // std::cout << analysis_result->to_string() << std::endl;
                 } else {
                     // 异常
                 }

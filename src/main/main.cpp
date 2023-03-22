@@ -58,7 +58,7 @@ int main(int argc, const char* argv[]) {
     //     ;
     // }
 
-    CLI::App app{"(todo) My CodeAnalyzer description"};
+    CLI::App app{"A simple code statistics tool"};
 
     // positional option
     std::string path;
@@ -68,20 +68,22 @@ int main(int argc, const char* argv[]) {
     // container options
     // -i path1 path2 path3 ...
     std::vector<std::string> ignored_paths;
-    app.add_option("-i,--ignore", ignored_paths, "Ignore path");
+    app.add_option("-i,--ignore", ignored_paths, "ignored paths");
 
     std::string language = "cpp";
-    app.add_option("-l,--language", language, "Language to analyze");
+    app.add_option(
+        "-l,--language", language,
+        "Language to analyze, only support cpp now, and default is cpp");
 
     try {
         // 在windows上不能这么用 好的 我也不在windows上开发
         app.parse(argc, argv);
 
-        std::cout << "path: " << path << std::endl;
-        std::cout << "language: " << language << std::endl;
-        for (const auto& ignored_path : ignored_paths) {
-            std::cout << "ignored path: " << ignored_path << std::endl;
-        }
+        // std::cout << "path: " << path << std::endl;
+        // std::cout << "language: " << language << std::endl;
+        // for (const auto& ignored_path : ignored_paths) {
+        //     std::cout << "ignored path: " << ignored_path << std::endl;
+        // }
 
         auto conf = conf::make_configuration();
         conf->add_load_path(path);

@@ -6,7 +6,7 @@ namespace stats {
 
 std::shared_ptr<CodeAnalyzerBase::AnalysisResult>
 CodeAnalyzerBase::analyze(const std::string& path) {
-    cout << path << endl;
+    cout << "stats... " << path << endl;
     init();
     std::ifstream fin(path);
     if (fin.is_open()) {
