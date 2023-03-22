@@ -3,9 +3,11 @@
         zhong, ysu
 */
 
-#include "code_analysis.h"
+#include "stats/code_analysis.hpp"
 #include <sstream>
 using namespace std;
+
+namespace stats {
 
 std::string CodeAnalyzerBase::AnalysisResult::to_string() const {
     stringstream context;
@@ -44,3 +46,5 @@ void CodeAnalyzerBase::AnalysisResult::statistics() noexcept {
             ++code_count;
     }
 }
+
+} // namespace stats

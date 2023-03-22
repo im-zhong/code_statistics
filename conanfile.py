@@ -23,6 +23,7 @@ class mycppRecipe(ConanFile):
 
     def requirements(self):
         self.requires("cli11/2.3.2")
+        self.requires("gtest/cci.20210126")
 
     def layout(self):
         cmake_layout(self)

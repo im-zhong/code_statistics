@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+namespace stats {
+
 namespace fs = std::filesystem;
 // namespace pt = boost::property_tree;
 
@@ -59,7 +61,8 @@ class CodeAnalyzerBase {
     };
 
     virtual std::shared_ptr<AnalysisResult> analyze(const std::string& path);
-    virtual std::shared_ptr<AnalysisResult> analyze(const std::wstring& path);
+    // virtual std::shared_ptr<AnalysisResult> analyze(const std::wstring&
+    // path);
 
   protected:
     void set_line_category(size_t line, LineCategory category) {
@@ -106,3 +109,4 @@ class CppCodeAnalyzer : public CodeAnalyzerBase {
 };
 
 std::shared_ptr<CodeAnalyzerBase> make_cpp_analyzer();
+} // namespace stats

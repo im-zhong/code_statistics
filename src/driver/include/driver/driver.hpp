@@ -1,14 +1,25 @@
 #pragma once
 
-#include "code_analysis.h"
-#include "configuration.h"
+#include "conf/conf.hpp"
+#include "stats/code_analysis.hpp"
 #include <list>
+#include <memory>
 
+namespace driver {
+using namespace conf;
+using namespace stats;
 class GlobalCodeAnalyzer {
+
   public:
     GlobalCodeAnalyzer()
         : _configuration_ptr_(make_configuration()),
           _analyzer_(make_cpp_analyzer()), _global_result_ptr_(nullptr) {
+        _global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
+    }
+
+    GlobalCodeAnalyzer(std::shared_ptr<conf::Configuration> conf)
+        : _configuration_ptr_(conf), _analyzer_(make_cpp_analyzer()),
+          _global_result_ptr_(nullptr) {
         _global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
     }
 
@@ -31,7 +42,7 @@ class GlobalCodeAnalyzer {
     }
 
     // 这个也可以变成扩展
-    bool extension_filter(const std::wstring& extension) {
+    bool extension_filter(const std::string& extension) {
         for (const auto& valid_extension :
              _configuration_ptr_->get_extension()) {
             if (extension == valid_extension)
@@ -92,15 +103,31 @@ class GlobalCodeAnalyzer {
                         }
 
                         if (fs::exists(entry) && fs::is_regular_file(entry)) {
+                            std::cout << entry.path().string() << std::endl;
                             if (!path_filter(entry.path()) ||
                                 !path_filter(
-                                    entry.path().filename().wstring()) ||
+                                    entry.path().filename().string()) ||
                                 !extension_filter(
-                                    entry.path().extension().wstring()))
+                                    entry.path().extension().string())) {
+                                if (!path_filter(entry.path())) {
+                                    std::cout << "path_filter" << std::endl;
+                                }
+                                if (!path_filter(
+                                        entry.path().filename().string())) {
+                                    std::cout << "filename_filter" << std::endl;
+                                }
+                                if (!extension_filter(
+                                        entry.path().extension().string())) {
+                                    std::cout << "extension_filter"
+                                              << std::endl;
+                                }
+
+                                std::cout << "continue" << std::endl;
                                 continue;
+                            }
 
                             auto analysis_result =
-                                _analyzer_->analyze(entry.path().wstring());
+                                _analyzer_->analyze(entry.path().string());
                             _global_result_ptr_->push_back(analysis_result);
                             analysis_result->statistics();
                             std::cout << analysis_result->to_string()
@@ -111,11 +138,11 @@ class GlobalCodeAnalyzer {
                     }
                 } else if (fs::is_regular_file(path)) {
                     if (!path_filter(path) ||
-                        !path_filter(path.filename().wstring()) ||
-                        !extension_filter(path.extension().wstring()))
+                        !path_filter(path.filename().string()) ||
+                        !extension_filter(path.extension().string()))
                         continue;
 
-                    auto analysis_result = _analyzer_->analyze(path.wstring());
+                    auto analysis_result = _analyzer_->analyze(path.string());
                     _global_result_ptr_->push_back(analysis_result);
                     analysis_result->statistics();
                     std::cout << analysis_result->to_string() << std::endl;
@@ -127,3 +154,4 @@ class GlobalCodeAnalyzer {
         }
     }
 };
+} // namespace driver

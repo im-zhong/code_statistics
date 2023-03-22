@@ -1,6 +1,8 @@
-#include "code_analysis.h"
+#include "stats/code_analysis.hpp"
 #include <sstream>
 using namespace std;
+
+namespace stats {
 
 std::shared_ptr<CodeAnalyzerBase::AnalysisResult>
 CodeAnalyzerBase::analyze(const std::string& path) {
@@ -14,18 +16,18 @@ CodeAnalyzerBase::analyze(const std::string& path) {
     return nullptr;
 }
 
-std::shared_ptr<CodeAnalyzerBase::AnalysisResult>
-CodeAnalyzerBase::analyze(const std::wstring& path) {
-    std::wcout.imbue(std::locale(""));
-    wcout << path << endl;
-    init();
-    std::ifstream fin(path);
-    if (fin.is_open()) {
-        analysis_result_ptr->path = path;
-        return analyze(fin);
-    }
-    return nullptr;
-}
+// std::shared_ptr<CodeAnalyzerBase::AnalysisResult>
+// CodeAnalyzerBase::analyze(const std::wstring& path) {
+//     std::wcout.imbue(std::locale(""));
+//     wcout << path << endl;
+//     init();
+//     std::ifstream fin(path);
+//     if (fin.is_open()) {
+//         analysis_result_ptr->path = path;
+//         return analyze(fin);
+//     }
+//     return nullptr;
+// }
 
 std::shared_ptr<CppCodeAnalyzer::AnalysisResult>
 CppCodeAnalyzer::analyze(std::ifstream& fin) {
@@ -364,3 +366,5 @@ CodeAnalyzerBase::line_category_to_string(LineCategory line_category) {
 std::shared_ptr<CodeAnalyzerBase> make_cpp_analyzer() {
     return std::make_shared<CppCodeAnalyzer>();
 }
+
+} // namespace stats

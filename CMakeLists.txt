@@ -13,5 +13,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 # # find_package(RocksDB REQUIRED)
 # find_package(asio REQUIRED)
 find_package(CLI11 REQUIRED)
+find_package(GTest REQUIRED)
 
 add_subdirectory(src)
