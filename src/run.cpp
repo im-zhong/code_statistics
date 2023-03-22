@@ -25,25 +25,25 @@
 #include "global_code_analysis.h"
 using namespace std;
 
-int main(int argc, const char *argv[]) {
-  // std::wcout.imbue(std::locale(""));
-  //// wcout << L"你好" << endl;
-  // auto configuraton_ptr = make_configuration();
-  // wcout << configuraton_ptr->to_string() << endl;
+int main(int argc, const char* argv[]) {
+    // std::wcout.imbue(std::locale(""));
+    //// wcout << L"你好" << endl;
+    // auto configuraton_ptr = make_configuration();
+    // wcout << configuraton_ptr->to_string() << endl;
 
-  ////configuraton_ptr->print(wcout);
-  // auto analyzer = make_cpp_analyzer();
-  //// 最简单的纯代码测试通过了
-  //// 接下来就是给我的result写一个tostring就行了
-  // auto result = analyzer->analyze(L"code_analysis.cpp");
-  // result->statistics();
-  // cout << result->to_string() << endl;
+    ////configuraton_ptr->print(wcout);
+    // auto analyzer = make_cpp_analyzer();
+    //// 最简单的纯代码测试通过了
+    //// 接下来就是给我的result写一个tostring就行了
+    // auto result = analyzer->analyze(L"code_analysis.cpp");
+    // result->statistics();
+    // cout << result->to_string() << endl;
 
-  try {
-    GlobalCodeAnalyzer analyzer;
-    analyzer.run();
-  } catch (const std::exception &e) {
-    cerr << e.what() << endl;
-    ;
-  }
+    try {
+        GlobalCodeAnalyzer analyzer;
+        analyzer.run();
+    } catch (const std::exception& e) {
+        cerr << e.what() << endl;
+        ;
+    }
 }
