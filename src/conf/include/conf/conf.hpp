@@ -82,7 +82,7 @@ class Configuration {
     void add_invalid_path(const fs::path& path) noexcept {
         invalid_path_.push_back(path);
     }
-    void add_extension() noexcept {
+    void add_cpp_extension() noexcept {
         extension_.push_back(".h");
         extension_.push_back(".hpp");
         extension_.push_back(".c");
@@ -91,6 +91,8 @@ class Configuration {
         extension_.push_back(".cxx");
         extension_.push_back(".hxx");
     }
+
+    void add_rust_extension() noexcept { extension_.push_back(".rs"); }
 
   private:
     // 其实这里用forward_list比vector好一点

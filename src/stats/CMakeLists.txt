@@ -4,6 +4,7 @@ project(stats)
 add_library(stats STATIC 
     src/analysis_result.cpp
     src/code_analysis.cpp
+    src/rust_analyzer.cpp
 )
 target_include_directories(stats 
     PUBLIC include

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #pragma once
 
 #include <filesystem>
@@ -109,4 +110,13 @@ class CppCodeAnalyzer : public CodeAnalyzerBase {
 };
 
 std::shared_ptr<CodeAnalyzerBase> make_cpp_analyzer();
+
+class RustCodeAnalyzer : public CodeAnalyzerBase {
+  public:
+    virtual void init() override;
+    virtual std::shared_ptr<AnalysisResult>
+    analyze(std::ifstream& fin) override;
+};
+std::shared_ptr<CodeAnalyzerBase> make_rust_analyzer();
+
 } // namespace stats

@@ -73,7 +73,7 @@ int main(int argc, const char* argv[]) {
     std::string language = "cpp";
     app.add_option(
         "-l,--language", language,
-        "Language to analyze, only support cpp now, and default is cpp");
+        "Language to analyze, support [cpp], [rust], and default is cpp");
 
     try {
         // 在windows上不能这么用 好的 我也不在windows上开发
@@ -90,7 +90,11 @@ int main(int argc, const char* argv[]) {
         for (const auto& ignored_path : ignored_paths) {
             conf->add_invalid_path(ignored_path);
         }
-        conf->add_extension();
+        if (language == "cpp") {
+            conf->add_cpp_extension();
+        } else if (language == "rust") {
+            conf->add_rust_extension();
+        }
 
         auto driver = driver::GlobalCodeAnalyzer(conf);
         driver.run();
