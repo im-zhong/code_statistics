@@ -78,14 +78,12 @@ std::shared_ptr<AnalysisResult> CodeAnalyzer::AnalyzeFile(std::istream& is) {
             continue;
         }
 
-        for (; offset < line.size(); offset++) {
+        while (offset < line.size()) {
             if (IsStringHead(line, offset)) {
-
                 // 接下来我们要对可能出现的跨行做处理
                 offset = SkipString(is, line, offset);
             } else if (IsRawStringHead(line, offset)) {
                 offset = SkipRawString(is, line, offset);
-
             } else if (IsLineCommentHead(line, offset)) {
                 // 只有在行注释的时候 这一行是可以跳过的
                 // 我们可以写一个SkipLineComment 在里面处理line category
@@ -104,9 +102,15 @@ std::shared_ptr<AnalysisResult> CodeAnalyzer::AnalyzeFile(std::istream& is) {
                 // 不行 也不能跳 我们还是得过一遍所有的代码
                 // 因为我们不知道之后会不会有块注释
                 // break;
+                // BUG: 全是代码 一直走这个逻辑 到最后没有人更新 line_begin =
+                // line_end
+                // SetLineCategory(line_begin, LineCategory::kCode);
                 SetLineCategory(line_begin, LineCategory::kCode);
+                ++offset;
             }
         }
+
+        line_begin = line_end;
     }
     return analysis_result_;
 }
@@ -168,7 +172,7 @@ auto CodeAnalyzer::SkipLineComment(std::istream& is, std::string& line,
     //     // TODO: 这样吧 咱们现在先不考虑 \ 连接多行的问题
     // }
     // return offset;
-    return std::string::npos - 1;
+    return std::string::npos;
 }
 
 auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
@@ -216,7 +220,7 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
                 // 如果有偶数个 那么他们互相匹配 这个"就和前面的匹配
                 // 也就是说 字符串到这里就结束了 也就是 i 处字符串结束
                 ++offset;
-                break;
+                return offset;
             } else {
                 // 如果是奇数  就说明这是一个转义序列
                 // 我们还需要从下一个位置再次查找 并且再次判断是不是正常结束
@@ -229,6 +233,7 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
         // 如果退出来了 就说明在本行没有找到吧
         // 也就是说 在这里我们需要寻找下一行
         // 当前行的属性已经可以确定是代码行
+        // 这里怎么会不对呢？这不是直接copy的代码吗？？？
         line_begin = line_end;
         // 然后读取下一行 继续在下一行寻找字符串的结尾
     } while (MyGetline(is, line));

@@ -13,10 +13,10 @@ std::string LineCategoryToString(LineCategory line_category) {
         context << "blank ";
     }
     if (line_category & LineCategory::kBlockComment) {
-        context << "block annotation ";
+        context << "block comment ";
     }
     if (line_category & LineCategory::kLineComment) {
-        context << "line annotation ";
+        context << "line comment ";
     }
     if (line_category & LineCategory::kCode) {
         context << "code ";
