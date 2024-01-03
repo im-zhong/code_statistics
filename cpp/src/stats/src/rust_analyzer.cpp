@@ -2,19 +2,13 @@
 // zhangzhong
 // rust analyzer
 
-#include "stats/code_analysis.hpp"
+#include "stats/rust_analyzer.hpp"
+#include <memory>
 
 namespace stats {
-void RustCodeAnalyzer::init() {}
 
-std::shared_ptr<CodeAnalyzerBase::AnalysisResult>
-RustCodeAnalyzer::analyze(std::ifstream& fin) {
-
-    return {};
-}
-
-std::shared_ptr<CodeAnalyzerBase> make_rust_analyzer() {
-    return make_cpp_analyzer();
+auto MakeRustAnalyzer() -> std::shared_ptr<RustAnalyzer> {
+    return std::make_shared<RustAnalyzer>();
 }
 
 } // namespace stats

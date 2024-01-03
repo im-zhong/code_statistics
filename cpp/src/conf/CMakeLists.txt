@@ -14,5 +14,5 @@ add_executable(test_conf
 )
 target_link_libraries(test_conf
     PRIVATE conf
-    PRIVATE gtest::gtest
+    PRIVATE doctest::doctest
 )

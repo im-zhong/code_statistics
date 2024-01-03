@@ -26,3 +26,7 @@ files: 11
 lines: 7
 codes: 5
 ```
+
+## TODO
+- [] 提取CppCodeAnalyzer中的函数，进行一个复用，然后支持一下python
+- [] 编译多个版本的放到release里面

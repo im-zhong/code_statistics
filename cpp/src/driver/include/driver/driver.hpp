@@ -1,7 +1,8 @@
 #pragma once
 
 #include "conf/conf.hpp"
-#include "stats/code_analysis.hpp"
+#include "stats/code_analyzer.hpp"
+#include "stats/cpp_analyzer.hpp"
 #include <list>
 #include <memory>
 
@@ -12,29 +13,28 @@ class GlobalCodeAnalyzer {
 
   public:
     GlobalCodeAnalyzer()
-        : _configuration_ptr_(make_configuration()),
-          _analyzer_(make_cpp_analyzer()), _global_result_ptr_(nullptr) {
-        _global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
+        : configuration_ptr_{make_configuration()},
+          analyzer_{MakeCppAnalyzer()}, global_result_ptr_{nullptr} {
+        global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
     }
 
     GlobalCodeAnalyzer(std::shared_ptr<conf::Configuration> conf)
-        : _configuration_ptr_(conf), _analyzer_(make_cpp_analyzer()),
-          _global_result_ptr_(nullptr) {
-        _global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
+        : configuration_ptr_(conf), analyzer_(MakeCppAnalyzer()),
+          global_result_ptr_(nullptr) {
+        global_result_ptr_ = std::make_shared<GlobalAnalysisResult>();
     }
 
-    using GlobalAnalysisResult =
-        std::list<std::shared_ptr<CodeAnalyzerBase::AnalysisResult>>;
+    using GlobalAnalysisResult = std::list<std::shared_ptr<AnalysisResult>>;
 
     // std::wstring _configuration_filename_;
-    std::shared_ptr<Configuration> _configuration_ptr_;
-    std::shared_ptr<CodeAnalyzerBase> _analyzer_;
-    std::shared_ptr<GlobalAnalysisResult> _global_result_ptr_;
+    std::shared_ptr<Configuration> configuration_ptr_;
+    std::shared_ptr<CodeAnalyzer> analyzer_;
+    std::shared_ptr<GlobalAnalysisResult> global_result_ptr_;
 
     // 可以通过过滤器的可以继续执行
     bool path_filter(const fs::path& path) {
         for (const auto& invalid_path :
-             _configuration_ptr_->get_invalid_path()) {
+             configuration_ptr_->get_invalid_path()) {
             if (path == invalid_path)
                 return false;
         }
@@ -44,7 +44,7 @@ class GlobalCodeAnalyzer {
     // 这个也可以变成扩展
     bool extension_filter(const std::string& extension) {
         for (const auto& valid_extension :
-             _configuration_ptr_->get_extension()) {
+             configuration_ptr_->get_extension()) {
             if (extension == valid_extension)
                 return true;
         }
@@ -72,7 +72,7 @@ class GlobalCodeAnalyzer {
         size_t all_file_count = 0;
         size_t all_line_count = 0;
         size_t all_code_count = 0;
-        for (const auto& result : *_global_result_ptr_) {
+        for (const auto& result : *global_result_ptr_) {
             // result->statistics();
             // std::cout << result->to_string() << std::endl;
             ++all_file_count;
@@ -89,7 +89,7 @@ class GlobalCodeAnalyzer {
 
     void global_analyze() {
         try {
-            for (auto& path : _configuration_ptr_->get_load_path()) {
+            for (auto& path : configuration_ptr_->get_load_path()) {
                 // path需要过滤
                 if (!path_filter(path))
                     continue;
@@ -129,8 +129,8 @@ class GlobalCodeAnalyzer {
                             }
 
                             auto analysis_result =
-                                _analyzer_->analyze(entry.path().string());
-                            _global_result_ptr_->push_back(analysis_result);
+                                analyzer_->Analyze(entry.path().string());
+                            global_result_ptr_->push_back(analysis_result);
                             analysis_result->statistics();
                             // std::cout << analysis_result->to_string()
                             //           << std::endl;
@@ -144,8 +144,8 @@ class GlobalCodeAnalyzer {
                         !extension_filter(path.extension().string()))
                         continue;
 
-                    auto analysis_result = _analyzer_->analyze(path.string());
-                    _global_result_ptr_->push_back(analysis_result);
+                    auto analysis_result = analyzer_->Analyze(path.string());
+                    global_result_ptr_->push_back(analysis_result);
                     analysis_result->statistics();
                     // std::cout << analysis_result->to_string() << std::endl;
                 } else {

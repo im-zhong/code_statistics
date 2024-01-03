@@ -1,9 +1,10 @@
 project(stats)
 
 # static stats library
-add_library(stats STATIC 
+add_library(stats STATIC
     src/analysis_result.cpp
-    src/code_analysis.cpp
+    src/cpp_analyzer.cpp
+    src/code_analyzer.cpp
     src/rust_analyzer.cpp
 )
 target_include_directories(stats 
@@ -16,5 +17,5 @@ add_executable(test_stats
 )
 target_link_libraries(test_stats
     PRIVATE stats
-    PRIVATE gtest::gtest
+    PRIVATE doctest::doctest
 )

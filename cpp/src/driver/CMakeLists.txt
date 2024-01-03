@@ -18,5 +18,5 @@ add_executable(test_driver
 )
 target_link_libraries(test_driver
     PRIVATE driver
-    PRIVATE gtest::gtest
+    PRIVATE doctest::doctest
 )
