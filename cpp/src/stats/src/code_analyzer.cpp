@@ -290,6 +290,7 @@ auto CodeAnalyzer::SkipUntilFindDelimiter(std::istream& is, std::string& line,
             offset += delimiter.size();
             break;
         }
+        offset = 0;
     } while (MyGetline(is, line));
 
     // begin -> ... { ...

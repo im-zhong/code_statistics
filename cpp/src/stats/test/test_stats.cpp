@@ -6,6 +6,19 @@
 #include "stats/cpp_analyzer.hpp"
 #include <doctest/doctest.h>
 
+TEST_CASE("test skip string") {
+    std::string code = R"(#include "test.hpp"
+    int main() {})";
+    auto analyzer = stats::MakeCppAnalyzer();
+    std::stringstream ss(code);
+    auto result = analyzer->AnalyzeFile(ss);
+    result->statistics();
+    CHECK(result->line_count == 2);
+    CHECK(result->code_count == 2);
+    CHECK(result->blank_count == 0);
+    CHECK(result->annotation_count == 0);
+}
+
 TEST_CASE("hello") {
     CHECK(1 == 1);
     CHECK(1 == 1);
@@ -32,19 +45,6 @@ TEST_CASE("test one line file") {
     result->statistics();
     CHECK(result->line_count == 1);
     CHECK(result->code_count == 1);
-    CHECK(result->blank_count == 0);
-    CHECK(result->annotation_count == 0);
-}
-
-TEST_CASE("test skip string") {
-    std::string code = R"(#include "test.hpp"
-    int main() {})";
-    auto analyzer = stats::MakeCppAnalyzer();
-    std::stringstream ss(code);
-    auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
-    CHECK(result->line_count == 2);
-    CHECK(result->code_count == 2);
     CHECK(result->blank_count == 0);
     CHECK(result->annotation_count == 0);
 }
@@ -104,6 +104,22 @@ TEST_CASE("simple cpp file") {
 
     std::string path{"/data/zhangzhong/src/code_statistics/cpp/src/stats/src/"
                      "cpp_analyzer.cpp"};
+    auto analyzer = stats::MakeCppAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->statistics();
+    for (size_t i = 0; i < result->line_category.size(); i++) {
+        std::cout << i + 1 << " : "
+                  << stats::LineCategoryToString(
+                         static_cast<stats::LineCategory>(
+                             result->line_category[i]))
+                  << std::endl;
+    }
+}
+
+// TODO: test raw string
+TEST_CASE("test raw string") {
+    std::string path{"/data/zhangzhong/src/code_statistics/cpp/src/stats/test/"
+                     "test_stats.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
     result->statistics();
