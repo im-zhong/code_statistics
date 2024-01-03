@@ -87,7 +87,8 @@ class CodeAnalyzer {
     virtual auto Init() -> void;
 
   protected:
-    auto MyGetline(std::istream& is, std::string& line) -> std::istream&;
+    auto GetLineAndResetOffset(std::istream& is, std::string& line,
+                               size_t& offset) -> std::istream&;
 
     auto FindFirstNotBlank(const std::string& line, size_t offset) -> size_t;
 

@@ -23,11 +23,12 @@ std::shared_ptr<AnalysisResult> CodeAnalyzer::Analyze(const std::string& path) {
     return nullptr;
 }
 
-auto CodeAnalyzer::MyGetline(std::istream& is, std::string& line)
-    -> std::istream& {
+auto CodeAnalyzer::GetLineAndResetOffset(std::istream& is, std::string& line,
+                                         size_t& offset) -> std::istream& {
     if (std::getline(is, line)) {
         ++line_end;
-        analysis_result_->line_category.push_back(0);
+        offset = 0;
+        analysis_result_->line_category.push_back(LineCategory::kBlank);
     }
     return is;
 }
@@ -62,14 +63,14 @@ std::shared_ptr<AnalysisResult> CodeAnalyzer::AnalyzeFile(std::istream& is) {
     auto category = LineCategory::kCode;
 
     // TODO: control word是干嘛的？
-    while (MyGetline(is, line)) {
+    while (GetLineAndResetOffset(is, line, offset)) {
 
         // aljdflajdlfjasdkf\
         asdfasdfsadlfjsadfl 'asdfsadf'
 
         // 差不多就是这样的逻辑了
         // offset没有重置
-        offset = 0;
+        // offset = 0;
         // offset = FindFirstNotBlank(line, offset);
         // // 这里要有处理空行的逻辑
         // if (line.empty() || (offset == std::string::npos)) {
@@ -156,26 +157,19 @@ auto CodeAnalyzer::FindFirstNotBlank(const std::string& line, size_t offset)
 
 auto CodeAnalyzer::SkipLineComment(std::istream& is, std::string& line,
                                    size_t offset) -> size_t {
-    SetLineCategory(line_begin, LineCategory::kLineComment);
-    line_begin = line_end;
-    // while (MyGetline(is, line)) {
-    //     SetLineCategory(line_begin, LineCategory::kLineComment);
-    //     // check last char is not '\'
-    //     // if (line.back() != '\\') {
-    //     //     // 如果不是\ 那么就说明这一行是注释行
-    //     //     // 我们需要跳出循环
-    //     //     // 跳出循环之前 我们需要将line_begin更新到line_end
-    //     //     // 因为我们在这里已经确定了这一行是注释行
-    //     //     // 但是我们不知道下一行是不是注释行
-    //     //     // 所以我们需要将line_begin更新到line_end
-    //     //     // 然后在下一次循环中再次更新line_begin
-    //     //     // 这样就可以保证line_begin一直指向的是代码行
-    //     //     line_begin = line_end;
-    //     //     break;
-    //     // }
-    //     // TODO: 这样吧 咱们现在先不考虑 \ 连接多行的问题
-    // }
-    // return offset;
+    // SetLineCategory(line_begin, LineCategory::kLineComment);
+    // line_begin = line_end;
+
+    while (line.back() == '\\') {
+        GetLineAndResetOffset(is, line, offset);
+    }
+
+    // 从line_begin 到 line_end 都写成注释
+    // 这段代码重复了 复用一下
+    for (; line_begin != line_end; ++line_begin) {
+        SetLineCategory(line_begin, LineCategory::kLineComment);
+    }
+    --line_begin;
     return std::string::npos;
 }
 
@@ -240,7 +234,7 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
         // 这里怎么会不对呢？这不是直接copy的代码吗？？？
         line_begin = line_end;
         // 然后读取下一行 继续在下一行寻找字符串的结尾
-    } while (MyGetline(is, line));
+    } while (GetLineAndResetOffset(is, line, offset));
 
     // 因为文本一定是正确的 所以offset一定停在“上面
     // ++offset;
@@ -278,37 +272,33 @@ auto CodeAnalyzer::SkipUntilFindDelimiter(std::istream& is, std::string& line,
                                           LineCategory line_category)
     -> size_t {
 
-    // raw string 可以跨行 和 block annotation 一样
-    // 那么这两个函数就都需要一个 delimiter
-    // 这样实现起来也是一样的
-    // std::string raw{R"de(hel
-    // lo)de"};
-    do {
-        // TODO: 将所有我们的代码改成这种返回offset的方式 和标准库保持一致
-        offset = line.find(delimiter, offset);
-        if (offset != std::string::npos) {
-            offset += delimiter.size();
-            break;
-        }
-        offset = 0;
-    } while (MyGetline(is, line));
+    // do {
+    //     // TODO: 将所有我们的代码改成这种返回offset的方式 和标准库保持一致
+    //     offset = line.find(delimiter, offset);
+    //     if (offset != std::string::npos) {
+    //         offset += delimiter.size();
+    //         break;
+    //     }
+    //     offset = 0;
+    // } while (MyGetline(is, line));
 
-    // begin -> ... { ...
+    while ((offset = line.find(delimiter, offset)) == std::string::npos) {
+        GetLineAndResetOffset(is, line, offset);
+    }
+    offset += delimiter.size();
+
+    // begin -> ... head ...
     //			...
-    //			... } ...
+    //			... tail ...
     // end   -> ...
     //
-    //			... { ...
+    //			... head ...
     //			...
-    // begin -> ... } ...
+    // begin -> ... tail ...
     // end   -> ...
-    for (; line_begin != line_end; ++line_begin)
+    for (; line_begin != line_end; ++line_begin) {
         SetLineCategory(line_begin, line_category);
-    // TODO:
-    // 这句代码出现在这里非常不好
-    // 应该放到Analyze的大循环里
-    // 两个find blank也应该合并
-    // offset = FindFirstNotBlank(line, offset);
+    }
     --line_begin;
     return offset;
 }
