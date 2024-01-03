@@ -87,6 +87,7 @@ class GlobalCodeAnalyzer {
         //      << endl;
     }
 
+    // TODO: 这个函数太复杂了 拆解一下
     void global_analyze() {
         try {
             for (auto& path : configuration_ptr_->get_load_path()) {

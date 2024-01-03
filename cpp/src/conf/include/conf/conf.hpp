@@ -93,6 +93,8 @@ class Configuration {
 
     void add_rust_extension() noexcept { extension_.push_back(".rs"); }
 
+    void add_python_extension() noexcept { extension_.push_back(".py"); }
+
   private:
     // 其实这里用forward_list比vector好一点
     // 因为我们不需要索引信息

@@ -60,61 +60,23 @@ auto CodeAnalyzer::IsBlockCommentHead(const std::string_view& line,
 std::shared_ptr<AnalysisResult> CodeAnalyzer::AnalyzeFile(std::istream& is) {
     std::string line{};
     size_t offset{};
-    auto category = LineCategory::kCode;
 
-    // TODO: control word是干嘛的？
     while (GetLineAndResetOffset(is, line, offset)) {
-
-        // aljdflajdlfjasdkf\
-        asdfasdfsadlfjsadfl 'asdfsadf'
-
-        // 差不多就是这样的逻辑了
-        // offset没有重置
-        // offset = 0;
-        // offset = FindFirstNotBlank(line, offset);
-        // // 这里要有处理空行的逻辑
-        // if (line.empty() || (offset == std::string::npos)) {
-        //     SetLineCategory(line_begin, LineCategory::kBlank);
-        //     line_begin = line_end;
-        //     continue;
-        // }
-
-        // 这样可以迅速跳过空白
-        // 但是问题来了 我们怎么添加空白行呢?? 要不就默认空白行吧
-        // 然后其他行可以掩盖空白行
         while ((offset = FindFirstNotBlank(line, offset)) !=
                std::string::npos) {
             if (IsStringHead(line, offset)) {
-                // 接下来我们要对可能出现的跨行做处理
                 offset = SkipString(is, line, offset);
             } else if (IsRawStringHead(line, offset)) {
                 offset = SkipRawString(is, line, offset);
             } else if (IsLineCommentHead(line, offset)) {
-                // 只有在行注释的时候 这一行是可以跳过的
-                // 我们可以写一个SkipLineComment 在里面处理line category
-                // 然后返回一个offset 跳出循环 这样就不用写这个break了
-                // 大家的逻辑就都一样了
-                // category = LineCategory::kLineComment;
-                // break;
                 offset = SkipLineComment(is, line, offset);
             } else if (IsBlockCommentHead(line, offset)) {
                 offset = SkipBlockComment(is, line, offset);
             } else {
-                // TODO: 怎么优化逻辑把这个分支去掉呢？
-                // normal code, just return code type
-                // 绝大多数情况下都是走这个分支
-                // category = LineCategory::kCode;
-                // 不行 也不能跳 我们还是得过一遍所有的代码
-                // 因为我们不知道之后会不会有块注释
-                // break;
-                // BUG: 全是代码 一直走这个逻辑 到最后没有人更新 line_begin =
-                // line_end
-                // SetLineCategory(line_begin, LineCategory::kCode);
                 SetLineCategory(line_begin, LineCategory::kCode);
                 ++offset;
             }
         }
-
         line_begin = line_end;
     }
     return analysis_result_;
@@ -137,28 +99,8 @@ auto CodeAnalyzer::FindFirstNotBlank(const std::string& line, size_t offset)
     return std::string::npos;
 }
 
-// TODO: 可以复用
-// auto CodeAnalyzer::SkipChar(const std::string& line, size_t offset) ->
-// size_t
-// {
-//     auto my_offset = line.find('\'', offset + 1);
-//     if (my_offset != std::string::npos) {
-//         offset = my_offset;
-//         while (line[offset - 1] == '\\' &&
-//                line[offset - 2] != '\\') { // 这是一个转义' 忽视 再次查找
-//                '
-//             offset = line.find('\'', offset + 1);
-//         }
-//     }
-//     ++offset;
-// }
-
-// 普通的string是不能换行的 是可以换行的 只要接 \ 就行了
-
 auto CodeAnalyzer::SkipLineComment(std::istream& is, std::string& line,
                                    size_t offset) -> size_t {
-    // SetLineCategory(line_begin, LineCategory::kLineComment);
-    // line_begin = line_end;
 
     while (line.back() == '\\') {
         GetLineAndResetOffset(is, line, offset);
@@ -178,20 +120,6 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
 
     // delimiter = ' or "
     std::string_view delimiter{line.substr(offset, 1)};
-
-    // string raw_delimiter;
-    // switch (find_raw_literal_head(line, offset, raw_delimiter)) {
-    // case LineCategory::kStringLiteral:
-    //     break;
-    // case LineCategory::kRawLiteral:
-    //     return;
-    // case LineCategory::kRawLiteralHead:
-    //     // skip raw literal
-    //     skip_raw_literal(is, line, offset, raw_delimiter);
-    //     return;
-    // };
-
-    // 直接查看line最后一个字符是不是
 
     do {
         SetLineCategory(line_begin, LineCategory::kCode);
@@ -231,7 +159,6 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
         // 如果退出来了 就说明在本行没有找到吧
         // 也就是说 在这里我们需要寻找下一行
         // 当前行的属性已经可以确定是代码行
-        // 这里怎么会不对呢？这不是直接copy的代码吗？？？
         line_begin = line_end;
         // 然后读取下一行 继续在下一行寻找字符串的结尾
     } while (GetLineAndResetOffset(is, line, offset));
@@ -271,17 +198,6 @@ auto CodeAnalyzer::SkipUntilFindDelimiter(std::istream& is, std::string& line,
                                           const std::string_view& delimiter,
                                           LineCategory line_category)
     -> size_t {
-
-    // do {
-    //     // TODO: 将所有我们的代码改成这种返回offset的方式 和标准库保持一致
-    //     offset = line.find(delimiter, offset);
-    //     if (offset != std::string::npos) {
-    //         offset += delimiter.size();
-    //         break;
-    //     }
-    //     offset = 0;
-    // } while (MyGetline(is, line));
-
     while ((offset = line.find(delimiter, offset)) == std::string::npos) {
         GetLineAndResetOffset(is, line, offset);
     }
