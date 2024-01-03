@@ -9,7 +9,7 @@ namespace stats {
 
 std::string LineCategoryToString(LineCategory line_category) {
     std::stringstream context;
-    if (line_category & LineCategory::kBlank) {
+    if (line_category == 0) {
         context << "blank ";
     }
     if (line_category & LineCategory::kBlockComment) {
@@ -52,8 +52,7 @@ void AnalysisResult::clear() noexcept {
 void AnalysisResult::statistics() noexcept {
     line_count = line_category.size();
     for (const auto& category : line_category) {
-        if (static_cast<uint>(category) &
-            static_cast<uint>(LineCategory::kBlank))
+        if (category == 0)
             ++blank_count;
         if (static_cast<uint>(category) &
             (static_cast<uint>(LineCategory::kBlockComment) |

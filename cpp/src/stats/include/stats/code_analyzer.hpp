@@ -17,7 +17,7 @@ namespace stats {
 namespace fs = std::filesystem;
 
 enum LineCategory : uint16_t {
-    kBlank = 0x01,
+    kBlank = 0x00,
     kCode = 0x02,
     kLineComment = 0x04,
 

@@ -70,15 +70,19 @@ std::shared_ptr<AnalysisResult> CodeAnalyzer::AnalyzeFile(std::istream& is) {
         // 差不多就是这样的逻辑了
         // offset没有重置
         offset = 0;
-        offset = FindFirstNotBlank(line, offset);
-        // 这里要有处理空行的逻辑
-        if (line.empty() || (offset == std::string::npos)) {
-            SetLineCategory(line_begin, LineCategory::kBlank);
-            line_begin = line_end;
-            continue;
-        }
+        // offset = FindFirstNotBlank(line, offset);
+        // // 这里要有处理空行的逻辑
+        // if (line.empty() || (offset == std::string::npos)) {
+        //     SetLineCategory(line_begin, LineCategory::kBlank);
+        //     line_begin = line_end;
+        //     continue;
+        // }
 
-        while (offset < line.size()) {
+        // 这样可以迅速跳过空白
+        // 但是问题来了 我们怎么添加空白行呢?? 要不就默认空白行吧
+        // 然后其他行可以掩盖空白行
+        while ((offset = FindFirstNotBlank(line, offset)) !=
+               std::string::npos) {
             if (IsStringHead(line, offset)) {
                 // 接下来我们要对可能出现的跨行做处理
                 offset = SkipString(is, line, offset);
@@ -299,7 +303,11 @@ auto CodeAnalyzer::SkipUntilFindDelimiter(std::istream& is, std::string& line,
     // end   -> ...
     for (; line_begin != line_end; ++line_begin)
         SetLineCategory(line_begin, line_category);
-    offset = FindFirstNotBlank(line, offset);
+    // TODO:
+    // 这句代码出现在这里非常不好
+    // 应该放到Analyze的大循环里
+    // 两个find blank也应该合并
+    // offset = FindFirstNotBlank(line, offset);
     --line_begin;
     return offset;
 }
