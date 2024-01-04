@@ -22,8 +22,8 @@ int main(int argc, const char* argv[]) {
 
     // container options
     // -i path1 path2 path3 ...
-    std::vector<std::string> ignored_paths;
-    app.add_option("-i,--ignore", ignored_paths, "ignored paths");
+    // std::vector<std::string> ignored_paths;
+    // app.add_option("-i,--ignore", ignored_paths, "ignored paths");
 
     std::string language = "cpp";
     app.add_option(
@@ -34,19 +34,12 @@ int main(int argc, const char* argv[]) {
         // 在windows上不能这么用
         app.parse(argc, argv);
 
-        auto conf = conf::make_configuration();
-        conf->add_load_path(path);
-        for (const auto& ignored_path : ignored_paths) {
-            conf->add_invalid_path(ignored_path);
-        }
-        if (language == "cpp") {
-            conf->add_cpp_extension();
-        } else if (language == "rust") {
-            conf->add_rust_extension();
-        }
+        auto conf = conf::MakeConf();
+        conf->AddLoadPath(path);
+        conf->AddLanguage(language);
 
-        auto driver = driver::GlobalCodeAnalyzer(conf);
-        driver.run();
+        auto driver = driver::Driver(conf, stats::MakeCodeAnalyzer(language));
+        driver.Run();
 
     } catch (const CLI::ParseError& e) {
         return app.exit(e);

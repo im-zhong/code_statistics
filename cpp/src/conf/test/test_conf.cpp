@@ -1,8 +1,11 @@
-// 2023/03/22
+// 2024/1/4
+// zhangzhong
 
-#include "conf/conf.hpp"
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest/doctest.h>
 
-int main(int argc, char* argv[]) {
-    // EXPECT_EQ(conf::HelloWorld(), "hello, world");
-    return 0;
+TEST_CASE("hello") {
+    CHECK(1 == 1);
+    CHECK(1 == 1);
+    CHECK(1 == 1);
 }

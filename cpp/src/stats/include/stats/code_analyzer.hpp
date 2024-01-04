@@ -126,4 +126,7 @@ class CodeAnalyzer {
     // std::string_view raw_string_delimiter_{"R\""};
 };
 
+auto MakeCodeAnalyzer(const std::string& language)
+    -> std::shared_ptr<CodeAnalyzer>;
+
 } // namespace stats

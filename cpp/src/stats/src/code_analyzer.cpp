@@ -2,6 +2,8 @@
 // zhangzhong
 
 #include "stats/code_analyzer.hpp"
+#include "stats/cpp_analyzer.hpp"
+#include "stats/rust_analyzer.hpp"
 #include <cstddef>
 #include <fstream>
 #include <memory>
@@ -9,6 +11,16 @@
 #include <string_view>
 
 namespace stats {
+
+auto MakeCodeAnalyzer(const std::string& language)
+    -> std::shared_ptr<CodeAnalyzer> {
+    if (language == "cpp") {
+        return std::make_shared<CppAnalyzer>();
+    } else if (language == "rust") {
+        return std::make_shared<RustAnalyzer>();
+    }
+    return nullptr;
+}
 
 std::shared_ptr<AnalysisResult> CodeAnalyzer::Analyze(const std::string& path) {
     std::cout << "stats... " << path << std::endl;
