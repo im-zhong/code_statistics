@@ -1,29 +1,20 @@
 // 2024/1/2
 // zhangzhong
 
-#include "CLI/App.hpp"
-#include "CLI/Config.hpp"
-#include "CLI/Formatter.hpp"
 #include "conf/conf.hpp"
 #include "driver/driver.hpp"
+#include <CLI/App.hpp>
+#include <CLI/Config.hpp>
 #include <CLI/ConfigFwd.hpp>
+#include <CLI/Formatter.hpp>
 #include <iostream>
-#include <optional>
 #include <string>
-#include <vector>
 
 int main(int argc, const char* argv[]) {
     CLI::App app{"A simple code statistics tool"};
 
-    // positional option
     std::string path;
     app.add_option("path", path, "Path to analyze")->required();
-    // 怎么描述这个是required
-
-    // container options
-    // -i path1 path2 path3 ...
-    // std::vector<std::string> ignored_paths;
-    // app.add_option("-i,--ignore", ignored_paths, "ignored paths");
 
     std::string language = "cpp";
     app.add_option(
@@ -31,7 +22,6 @@ int main(int argc, const char* argv[]) {
         "Language to analyze, support [cpp], [rust], and default is cpp");
 
     try {
-        // 在windows上不能这么用
         app.parse(argc, argv);
 
         auto conf = conf::MakeConf();

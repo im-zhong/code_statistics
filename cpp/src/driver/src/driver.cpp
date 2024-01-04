@@ -1,43 +1,16 @@
-// 2023/03/22
+// 2024/1/4
+// zhangzhong
 
 #include "driver/driver.hpp"
 
 namespace driver {
 
-bool Driver::FilterExtension(const std::string& extension) {
-    for (const auto& valid_extension : conf_->GetExtensions()) {
-        if (extension == valid_extension)
-            return true;
-    }
-    return false;
-}
-
 void Driver::Run() {
-    try {
-        Analyze();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-    }
-
+    RunImpl();
     PrintResults();
 }
 
-void Driver::PrintResults() {
-    // 统计总的代码行 和 注释行
-    size_t all_file_count = 0;
-    size_t all_line_count = 0;
-    size_t all_code_count = 0;
-    for (const auto& result : *results_) {
-        ++all_file_count;
-        all_line_count += result->line_count;
-        all_code_count += result->code_count;
-    }
-    std::cout << "\nfiles: " << all_file_count << std::endl;
-    std::cout << "lines: " << all_line_count << std::endl;
-    std::cout << "codes: " << all_code_count << std::endl;
-}
-
-void Driver::Analyze() {
+void Driver::RunImpl() {
     for (auto& path : conf_->GetLoadPaths()) {
         if (fs::is_directory(path)) {
             for (auto& entry : fs::recursive_directory_iterator(path)) {
@@ -57,6 +30,28 @@ void Driver::AnalyzePath(const fs::path& path) {
     auto result = analyzer_->Analyze(path);
     results_->push_back(result);
     result->statistics();
+}
+
+bool Driver::FilterExtension(const std::string& extension) {
+    for (const auto& valid_extension : conf_->GetExtensions()) {
+        if (extension == valid_extension)
+            return true;
+    }
+    return false;
+}
+
+void Driver::PrintResults() {
+    size_t all_file_count = 0;
+    size_t all_line_count = 0;
+    size_t all_code_count = 0;
+    for (const auto& result : *results_) {
+        ++all_file_count;
+        all_line_count += result->line_count;
+        all_code_count += result->code_count;
+    }
+    std::cout << "\nfiles: " << all_file_count << std::endl;
+    std::cout << "lines: " << all_line_count << std::endl;
+    std::cout << "codes: " << all_code_count << std::endl;
 }
 
 } // namespace driver

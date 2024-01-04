@@ -1,5 +1,3 @@
-project(main)
-
 add_executable(code_statistics main.cpp)
 target_link_libraries(code_statistics 
     PRIVATE CLI11::CLI11
