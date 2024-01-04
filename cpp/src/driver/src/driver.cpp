@@ -5,7 +5,7 @@
 namespace driver {
 
 bool Driver::FilterExtension(const std::string& extension) {
-    for (const auto& valid_extension : conf_->GetFileExtensions()) {
+    for (const auto& valid_extension : conf_->GetExtensions()) {
         if (extension == valid_extension)
             return true;
     }
@@ -38,7 +38,7 @@ void Driver::PrintResults() {
 }
 
 void Driver::Analyze() {
-    for (auto& path : conf_->GetLoadPath()) {
+    for (auto& path : conf_->GetLoadPaths()) {
         if (fs::is_directory(path)) {
             for (auto& entry : fs::recursive_directory_iterator(path)) {
                 if (fs::exists(entry) && fs::is_regular_file(entry)) {

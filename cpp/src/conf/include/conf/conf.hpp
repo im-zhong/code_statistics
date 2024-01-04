@@ -16,12 +16,9 @@ namespace conf {
 
 class Conf {
   public:
-    const std::list<fs::path>& GetLoadPath() const noexcept;
-
-    const std::list<std::string>& GetFileExtensions() const noexcept;
-
-    void AddLoadPath(const fs::path& path) noexcept;
-
+    auto GetLoadPaths() const noexcept -> const std::list<fs::path>&;
+    auto GetExtensions() const noexcept -> const std::list<std::string>&;
+    auto AddLoadPath(const fs::path& path) -> void;
     auto AddLanguage(const std::string& language) -> bool;
 
   private:
@@ -33,6 +30,6 @@ class Conf {
          {"rust", {".rs"}}};
 };
 
-std::shared_ptr<Conf> MakeConf();
+auto MakeConf() -> std::shared_ptr<Conf>;
 
 } // namespace conf

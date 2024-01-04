@@ -6,17 +6,17 @@
 
 namespace conf {
 
-std::shared_ptr<Conf> MakeConf() { return std::make_shared<Conf>(); }
+auto MakeConf() -> std::shared_ptr<Conf> { return std::make_shared<Conf>(); }
 
-const std::list<fs::path>& Conf::GetLoadPath() const noexcept {
+auto Conf::GetLoadPaths() const noexcept -> const std::list<fs::path>& {
     return load_paths_;
 }
 
-const std::list<std::string>& Conf::GetFileExtensions() const noexcept {
+auto Conf::GetExtensions() const noexcept -> const std::list<std::string>& {
     return extensions_;
 }
 
-void Conf::AddLoadPath(const fs::path& path) noexcept {
+auto Conf::AddLoadPath(const fs::path& path) -> void {
     load_paths_.push_back(path);
 }
 
