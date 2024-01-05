@@ -22,9 +22,9 @@ the second line is blank line, and the forth line is comment line, and the rest 
 ```
 stats... src/main.cpp
 
-files: 11
+files: 1
 lines: 7
-codes: 5(50%)
-comments: 1(10%)
+codes: 5 (71.43%)
+comments: 1 (14.29%)
 ```
 

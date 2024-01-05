@@ -30,7 +30,6 @@ int main(int argc, const char* argv[]) {
 
         auto driver = driver::Driver(conf, stats::MakeCodeAnalyzer(language));
         driver.Run();
-
     } catch (const CLI::ParseError& e) {
         return app.exit(e);
     } catch (const std::exception& e) {
