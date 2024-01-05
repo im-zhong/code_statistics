@@ -24,9 +24,10 @@ stats... src/main.cpp
 
 files: 11
 lines: 7
-codes: 5
+codes: 5(50%)
+comments: 1(10%)
 ```
 
 ## TODO
-- [] 提取CppCodeAnalyzer中的函数，进行一个复用，然后支持一下python
+- [x] 提取CppCodeAnalyzer中的函数，进行一个复用，然后支持一下python
 - [] 编译多个版本的放到release里面

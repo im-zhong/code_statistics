@@ -50,13 +50,19 @@ auto Driver::PrintResults() -> void {
     auto all_file_count = size_t{0};
     auto all_line_count = size_t{0};
     auto all_code_count = size_t{0};
+    auto all_comment_count = size_t{0};
     for (const auto& result : *results_) {
         ++all_file_count;
         all_line_count += result->line_count;
         all_code_count += result->code_count;
+        all_comment_count += result->comment_count;
     }
-    fmt::println("\nfiles: {}\nlines: {}\ncodes: {}", all_file_count,
-                 all_line_count, all_code_count);
+    fmt::println(
+        "\nfiles: {}\nlines: {}\ncodes: {} ({:.2f}%)\ncomments: {} ({:.2f}%)",
+        all_file_count, all_line_count, all_code_count,
+        static_cast<double>(all_code_count) / all_line_count * 100,
+        all_comment_count,
+        static_cast<double>(all_comment_count) / all_line_count * 100);
 }
 
 } // namespace driver
