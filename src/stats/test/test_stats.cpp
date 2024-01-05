@@ -98,8 +98,7 @@ int main() {
 }
 
 TEST_CASE("simple cpp file") {
-
-    std::string path{"/data/zhangzhong/src/code_statistics/cpp/src/stats/src/"
+    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/src/"
                      "cpp_analyzer.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
@@ -108,7 +107,7 @@ TEST_CASE("simple cpp file") {
 }
 
 TEST_CASE("test raw string") {
-    std::string path{"/data/zhangzhong/src/code_statistics/cpp/src/stats/test/"
+    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
                      "test_stats.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
