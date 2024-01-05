@@ -27,7 +27,8 @@ class Conf {
 
     const std::map<std::string, std::vector<std::string>> language_extensions_ =
         {{"cpp", {".h", ".hpp", ".c", ".cpp", ".cc", ".cxx", ".hxx"}},
-         {"rust", {".rs"}}};
+         {"rust", {".rs"}},
+         {"python", {".py"}}};
 };
 
 auto MakeConf() -> std::shared_ptr<Conf>;

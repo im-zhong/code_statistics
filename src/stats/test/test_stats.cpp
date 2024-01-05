@@ -1,19 +1,35 @@
 // 2024/1/3
 // zhangzhong
 
+#include "stats/analysis_result.hpp"
+#include <memory>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "stats/cpp_analyzer.hpp"
+#include "stats/python_analyzer.hpp"
 #include <doctest/doctest.h>
 #include <fmt/core.h>
 #include <sstream>
 
-void PrintResult(std::shared_ptr<stats::AnalysisResult> result) {
+auto ResultToString(std::shared_ptr<stats::AnalysisResult> result) {
+    auto ss = std::stringstream{};
     for (size_t i = 0; i < result->line_categories.size(); i++) {
-        fmt::println(
-            "{} : {}", i + 1,
+        ss << fmt::format(
+            "{} : {}\n", i + 1,
             stats::LineCategoryToString(
                 static_cast<stats::LineCategory>(result->line_categories[i])));
     }
+    return ss.str();
+}
+
+void PrintResult(std::shared_ptr<stats::AnalysisResult> result) {
+    fmt::print(ResultToString(result));
+}
+
+auto TestGolden(std::string const& result, std::string const& golden_path) {
+    auto fin = std::ifstream{golden_path};
+    auto golden_str = std::string{(std::istreambuf_iterator<char>(fin)),
+                                  std::istreambuf_iterator<char>()};
+    CHECK(result == golden_str);
 }
 
 TEST_CASE("test skip string") {
@@ -47,6 +63,24 @@ TEST_CASE("test empty file") {
     CHECK(result->comment_count == 0);
 }
 
+TEST_CASE("test block comment") {
+    auto code = std::string{R"(/*
+xxx
+xxx
+*/
+
+int main() {}
+)"};
+    auto analyzer = stats::MakeCppAnalyzer();
+    std::stringstream ss(code);
+    auto result = analyzer->AnalyzeFile(ss);
+    result->Statistics();
+    CHECK(result->line_count == 6);
+    CHECK(result->code_count == 1);
+    CHECK(result->blank_count == 1);
+    CHECK(result->comment_count == 4);
+}
+
 TEST_CASE("test one line file") {
     std::string code = "int main() { return 0; }\n";
     auto analyzer = stats::MakeCppAnalyzer();
@@ -71,7 +105,6 @@ TEST_CASE("skip at blank") {
     CHECK(result->code_count == 1);
     CHECK(result->blank_count == 0);
     CHECK(result->comment_count == 1);
-    PrintResult(result);
 }
 
 TEST_CASE("simple cpp code without raw string") {
@@ -94,7 +127,6 @@ int main() {
     CHECK(result->code_count == 5);
     CHECK(result->blank_count == 3);
     CHECK(result->comment_count == 2);
-    PrintResult(result);
 }
 
 TEST_CASE("simple cpp file") {
@@ -103,7 +135,6 @@ TEST_CASE("simple cpp file") {
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
-    PrintResult(result);
 }
 
 TEST_CASE("test raw string") {
@@ -112,7 +143,6 @@ TEST_CASE("test raw string") {
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
-    PrintResult(result);
 }
 
 TEST_CASE("test span line comment") {
@@ -128,5 +158,45 @@ int main() {})";
     CHECK(result->code_count == 1);
     CHECK(result->blank_count == 1);
     CHECK(result->comment_count == 2);
-    PrintResult(result);
+}
+
+TEST_CASE("test simple python file") {
+    std::string path{"/data/zhangzhong/src/code_statistics/conanfile.py"};
+    auto analyzer = stats::MakePythonAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->Statistics();
+}
+
+TEST_CASE("#bug1: test python file") {
+    std::string path{
+        "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
+        "stance_predict.py"};
+    auto analyzer = stats::MakePythonAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->Statistics();
+    TestGolden(ResultToString(result),
+               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
+               "stance_predict.txt");
+}
+
+TEST_CASE("#bug2: test python file") {
+    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+                     "goldens/file_process.py"};
+    auto analyzer = stats::MakePythonAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->Statistics();
+    TestGolden(ResultToString(result),
+               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
+               "file_process.txt");
+}
+
+TEST_CASE("#bug3: test python file") {
+    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+                     "goldens/lispy.py"};
+    auto analyzer = stats::MakePythonAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->Statistics();
+    TestGolden(ResultToString(result),
+               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
+               "lispy.txt");
 }

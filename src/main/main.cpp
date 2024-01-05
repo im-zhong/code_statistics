@@ -17,9 +17,9 @@ int main(int argc, const char* argv[]) {
     app.add_option("path", path, "Path to analyze")->required();
 
     auto language = std::string{"cpp"};
-    app.add_option(
-        "-l,--language", language,
-        "Language to analyze, support [cpp], [rust], and default is cpp");
+    app.add_option("-l,--language", language,
+                   "Language to analyze, support [cpp], [rust], [python], and "
+                   "default is cpp");
 
     try {
         app.parse(argc, argv);

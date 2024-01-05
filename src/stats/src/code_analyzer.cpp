@@ -3,6 +3,7 @@
 
 #include "stats/code_analyzer.hpp"
 #include "stats/cpp_analyzer.hpp"
+#include "stats/python_analyzer.hpp"
 #include "stats/rust_analyzer.hpp"
 #include <cstddef>
 #include <fmt/core.h>
@@ -106,7 +107,9 @@ auto CodeAnalyzer::IsStringHead(std::string_view const& line, size_t offset)
 auto CodeAnalyzer::IsRawStringHead(std::string_view const& line, size_t offset)
     -> bool {
     return line.substr(offset, 2) == std::string_view{"R\""} ||
-           line.substr(offset, 2) == std::string_view{"r\""};
+           line.substr(offset, 2) == std::string_view{"r\""} ||
+           line.substr(offset, 2) == std::string_view{"R\'"} ||
+           line.substr(offset, 2) == std::string_view{"r\'"};
 }
 
 auto CodeAnalyzer::IsLineCommentHead(std::string_view const& line,
@@ -172,11 +175,13 @@ auto CodeAnalyzer::SkipString(std::istream& is, std::string& line,
 
 auto CodeAnalyzer::SkipRawString(std::istream& is, std::string& line,
                                  size_t offset) -> size_t {
-    auto raw_string_head = std::string{line.substr(offset, 2)};
+    // raw string: r"..."
+    // offset -> r, but r should not couat as a part of raw string
+    auto raw_string_head = std::string{line.substr(offset + 1, 1)};
     auto raw_string_tail =
         std::string{raw_string_head.rbegin(), raw_string_head.rend()};
-    return SkipUntilFindDelimiter(is, line, offset, raw_string_tail,
-                                  LineCategory::kCode);
+    return SkipUntilFindDelimiter(is, line, offset + 1 + raw_string_head.size(),
+                                  raw_string_tail, LineCategory::kCode);
 }
 
 auto CodeAnalyzer::SkipLineComment(std::istream& is, std::string& line,
@@ -193,7 +198,8 @@ auto CodeAnalyzer::SkipLineComment(std::istream& is, std::string& line,
 
 auto CodeAnalyzer::SkipBlockComment(std::istream& is, std::string& line,
                                     size_t offset) -> size_t {
-    return SkipUntilFindDelimiter(is, line, offset, block_comment_tail_,
+    return SkipUntilFindDelimiter(is, line, offset + block_comment_head_.size(),
+                                  block_comment_tail_,
                                   LineCategory::kBlockComment);
 }
 
@@ -229,6 +235,8 @@ auto MakeCodeAnalyzer(std::string const& language)
         return std::make_shared<CppAnalyzer>();
     } else if (language == "rust") {
         return std::make_shared<RustAnalyzer>();
+    } else if (language == "python") {
+        return std::make_shared<PythonAnalyzer>();
     }
     return nullptr;
 }
