@@ -57,5 +57,4 @@ build
 CMakeUserPresets.json
 compile_commands.json
 
-# rust
-/target
+.vscode
