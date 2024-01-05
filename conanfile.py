@@ -9,7 +9,7 @@ class mycppRecipe(ConanFile):
     package_type = "application"
 
     # Optional metadata
-    license = "<Put the package license here>"
+    license = "GPL-3.0"
     author = "im.zhong@outlook.com"
     url = "https://github.com/im-zhong/code_statistics"
     description = "A simple code statistics tool"
