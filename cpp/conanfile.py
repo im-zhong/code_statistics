@@ -5,15 +5,15 @@ import os
 
 class mycppRecipe(ConanFile):
     name = "CodeStatistics"
-    version = "0.0.1"
+    version = "0.2.0"
     package_type = "application"
 
     # Optional metadata
     license = "<Put the package license here>"
-    author = "<Put your name here> <And your email here>"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of zcc package here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    author = "im.zhong@outlook.com"
+    url = "https://github.com/im-zhong/code_statistics"
+    description = "A simple code statistics tool"
+    topics = ("C++", "Code", "Statistics")
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
@@ -21,9 +21,10 @@ class mycppRecipe(ConanFile):
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*"
 
-    def requirements(self):
+    def requirements(self: "ConanFile"):
         self.requires("cli11/2.3.2")
         self.requires("doctest/2.4.11")
+        self.requires("fmt/10.2.1")
 
     def layout(self):
         cmake_layout(self)
@@ -38,9 +39,7 @@ class mycppRecipe(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
-        # 我们希望你可以自动的生成 db 文件
-        # print(self.settings.build_type)
-        # 它在执行build的时候 pwd是在build文件夹里面的
+        # Create a symlink to the compile_commands.json file
         db_path = os.path.join(
             "build", str(self.settings.build_type), "compile_commands.json")
         if os.path.exists("../../compile_commands.json"):

@@ -2,15 +2,21 @@
 // zhangzhong
 
 #include "driver/driver.hpp"
+#include <fmt/core.h>
 
 namespace driver {
 
-void Driver::Run() {
+Driver::Driver(std::shared_ptr<conf::Conf> conf,
+               std::shared_ptr<stats::CodeAnalyzer> analyzer)
+    : conf_(conf), analyzer_(analyzer),
+      results_(std::make_shared<GlobalAnalysisResult>()) {}
+
+auto Driver::Run() -> void {
     RunImpl();
     PrintResults();
 }
 
-void Driver::RunImpl() {
+auto Driver::RunImpl() -> void {
     for (auto& path : conf_->GetLoadPaths()) {
         if (fs::is_directory(path)) {
             for (auto& entry : fs::recursive_directory_iterator(path)) {
@@ -24,15 +30,15 @@ void Driver::RunImpl() {
     }
 }
 
-void Driver::AnalyzePath(const fs::path& path) {
+auto Driver::AnalyzePath(const fs::path& path) -> void {
     if (!FilterExtension(path.extension().string()))
         return;
     auto result = analyzer_->Analyze(path);
     results_->push_back(result);
-    result->statistics();
+    result->Statistics();
 }
 
-bool Driver::FilterExtension(const std::string& extension) {
+auto Driver::FilterExtension(std::string const& extension) -> bool {
     for (const auto& valid_extension : conf_->GetExtensions()) {
         if (extension == valid_extension)
             return true;
@@ -40,18 +46,17 @@ bool Driver::FilterExtension(const std::string& extension) {
     return false;
 }
 
-void Driver::PrintResults() {
-    size_t all_file_count = 0;
-    size_t all_line_count = 0;
-    size_t all_code_count = 0;
+auto Driver::PrintResults() -> void {
+    auto all_file_count = size_t{0};
+    auto all_line_count = size_t{0};
+    auto all_code_count = size_t{0};
     for (const auto& result : *results_) {
         ++all_file_count;
         all_line_count += result->line_count;
         all_code_count += result->code_count;
     }
-    std::cout << "\nfiles: " << all_file_count << std::endl;
-    std::cout << "lines: " << all_line_count << std::endl;
-    std::cout << "codes: " << all_code_count << std::endl;
+    fmt::println("\nfiles: {}\nlines: {}\ncodes: {}", all_file_count,
+                 all_line_count, all_code_count);
 }
 
 } // namespace driver

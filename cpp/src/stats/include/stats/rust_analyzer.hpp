@@ -6,7 +6,11 @@
 
 namespace stats {
 
-class RustAnalyzer : public CodeAnalyzer {};
+class RustAnalyzer : public CodeAnalyzer {
+  public:
+    RustAnalyzer();
+    virtual ~RustAnalyzer() = default;
+};
 
 auto MakeRustAnalyzer() -> std::shared_ptr<RustAnalyzer>;
 

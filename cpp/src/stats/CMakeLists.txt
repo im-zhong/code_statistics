@@ -10,6 +10,9 @@ add_library(stats STATIC
 target_include_directories(stats 
     PUBLIC include
 )
+target_link_libraries(stats
+    PUBLIC fmt::fmt
+)
 
 # stats unit tests
 add_executable(test_stats 
@@ -18,4 +21,5 @@ add_executable(test_stats
 target_link_libraries(test_stats
     PRIVATE stats
     PRIVATE doctest::doctest
+    PRIVATE fmt::fmt
 )

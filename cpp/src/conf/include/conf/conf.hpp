@@ -19,7 +19,7 @@ class Conf {
     auto GetLoadPaths() const noexcept -> const std::list<fs::path>&;
     auto GetExtensions() const noexcept -> const std::list<std::string>&;
     auto AddLoadPath(const fs::path& path) -> void;
-    auto AddLanguage(const std::string& language) -> bool;
+    auto AddLanguage(std::string const& language) -> bool;
 
   private:
     std::list<fs::path> load_paths_;

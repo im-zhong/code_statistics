@@ -16,17 +16,14 @@ class Driver {
         std::list<std::shared_ptr<stats::AnalysisResult>>;
 
     Driver(std::shared_ptr<conf::Conf> conf,
-           std::shared_ptr<stats::CodeAnalyzer> analyzer)
-        : conf_(conf), analyzer_(analyzer),
-          results_(std::make_shared<GlobalAnalysisResult>()) {}
-
-    void Run();
+           std::shared_ptr<stats::CodeAnalyzer> analyzer);
+    auto Run() -> void;
 
   private:
-    void RunImpl();
-    void AnalyzePath(const fs::path& path);
-    void PrintResults();
-    bool FilterExtension(const std::string& extension);
+    auto RunImpl() -> void;
+    auto AnalyzePath(const fs::path& path) -> void;
+    auto PrintResults() -> void;
+    auto FilterExtension(std::string const& extension) -> bool;
 
   private:
     std::shared_ptr<conf::Conf> conf_;

@@ -20,7 +20,7 @@ auto Conf::AddLoadPath(const fs::path& path) -> void {
     load_paths_.push_back(path);
 }
 
-auto Conf::AddLanguage(const std::string& language) -> bool {
+auto Conf::AddLanguage(std::string const& language) -> bool {
     if (language_extensions_.find(language) == language_extensions_.end()) {
         return false;
     }

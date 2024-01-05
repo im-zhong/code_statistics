@@ -4,7 +4,17 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "stats/cpp_analyzer.hpp"
 #include <doctest/doctest.h>
+#include <fmt/core.h>
 #include <sstream>
+
+void PrintResult(std::shared_ptr<stats::AnalysisResult> result) {
+    for (size_t i = 0; i < result->line_categories.size(); i++) {
+        fmt::println(
+            "{} : {}", i + 1,
+            stats::LineCategoryToString(
+                static_cast<stats::LineCategory>(result->line_categories[i])));
+    }
+}
 
 TEST_CASE("test skip string") {
     std::string code = R"(#include "test.hpp"
@@ -12,11 +22,11 @@ TEST_CASE("test skip string") {
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 2);
     CHECK(result->code_count == 2);
     CHECK(result->blank_count == 0);
-    CHECK(result->annotation_count == 0);
+    CHECK(result->comment_count == 0);
 }
 
 TEST_CASE("hello") {
@@ -30,11 +40,11 @@ TEST_CASE("test empty file") {
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 0);
     CHECK(result->code_count == 0);
     CHECK(result->blank_count == 0);
-    CHECK(result->annotation_count == 0);
+    CHECK(result->comment_count == 0);
 }
 
 TEST_CASE("test one line file") {
@@ -42,11 +52,11 @@ TEST_CASE("test one line file") {
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 1);
     CHECK(result->code_count == 1);
     CHECK(result->blank_count == 0);
-    CHECK(result->annotation_count == 0);
+    CHECK(result->comment_count == 0);
 }
 
 TEST_CASE("skip at blank") {
@@ -56,18 +66,12 @@ TEST_CASE("skip at blank") {
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 2);
     CHECK(result->code_count == 1);
     CHECK(result->blank_count == 0);
-    CHECK(result->annotation_count == 1);
-    for (size_t i = 0; i < result->line_category.size(); i++) {
-        std::cout << i + 1 << " : "
-                  << stats::LineCategoryToString(
-                         static_cast<stats::LineCategory>(
-                             result->line_category[i]))
-                  << std::endl;
-    }
+    CHECK(result->comment_count == 1);
+    PrintResult(result);
 }
 
 TEST_CASE("simple cpp code without raw string") {
@@ -85,19 +89,12 @@ int main() {
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 10);
     CHECK(result->code_count == 5);
     CHECK(result->blank_count == 3);
-    CHECK(result->annotation_count == 2);
-    // 输出每一行的类型
-    for (size_t i = 0; i < result->line_category.size(); i++) {
-        std::cout << i + 1 << " : "
-                  << stats::LineCategoryToString(
-                         static_cast<stats::LineCategory>(
-                             result->line_category[i]))
-                  << std::endl;
-    }
+    CHECK(result->comment_count == 2);
+    PrintResult(result);
 }
 
 TEST_CASE("simple cpp file") {
@@ -106,33 +103,19 @@ TEST_CASE("simple cpp file") {
                      "cpp_analyzer.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
-    result->statistics();
-    for (size_t i = 0; i < result->line_category.size(); i++) {
-        std::cout << i + 1 << " : "
-                  << stats::LineCategoryToString(
-                         static_cast<stats::LineCategory>(
-                             result->line_category[i]))
-                  << std::endl;
-    }
+    result->Statistics();
+    PrintResult(result);
 }
 
-// test raw string
 TEST_CASE("test raw string") {
     std::string path{"/data/zhangzhong/src/code_statistics/cpp/src/stats/test/"
                      "test_stats.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
-    result->statistics();
-    for (size_t i = 0; i < result->line_category.size(); i++) {
-        std::cout << i + 1 << " : "
-                  << stats::LineCategoryToString(
-                         static_cast<stats::LineCategory>(
-                             result->line_category[i]))
-                  << std::endl;
-    }
+    result->Statistics();
+    PrintResult(result);
 }
 
-// TODO: test 跨行注释
 TEST_CASE("test span line comment") {
     std::string code = R"(// 2024/1/3\
 test test test
@@ -141,16 +124,10 @@ int main() {})";
     auto analyzer = stats::MakeCppAnalyzer();
     std::stringstream ss(code);
     auto result = analyzer->AnalyzeFile(ss);
-    result->statistics();
+    result->Statistics();
     CHECK(result->line_count == 4);
     CHECK(result->code_count == 1);
     CHECK(result->blank_count == 1);
-    CHECK(result->annotation_count == 2);
-    for (size_t i = 0; i < result->line_category.size(); i++) {
-        std::cout << i + 1 << " : "
-                  << stats::LineCategoryToString(
-                         static_cast<stats::LineCategory>(
-                             result->line_category[i]))
-                  << std::endl;
-    }
+    CHECK(result->comment_count == 2);
+    PrintResult(result);
 }

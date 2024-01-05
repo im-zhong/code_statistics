@@ -11,12 +11,12 @@
 #include <string>
 
 int main(int argc, const char* argv[]) {
-    CLI::App app{"A simple code statistics tool"};
+    auto app = CLI::App{"A simple code statistics tool"};
 
-    std::string path;
+    auto path = std::string{};
     app.add_option("path", path, "Path to analyze")->required();
 
-    std::string language = "cpp";
+    auto language = std::string{"cpp"};
     app.add_option(
         "-l,--language", language,
         "Language to analyze, support [cpp], [rust], and default is cpp");

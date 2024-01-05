@@ -1,14 +1,14 @@
 // 2024/1/3
 // zhangzhong
 
-#include "stats/code_analyzer.hpp"
+#include "stats/analysis_result.hpp"
 #include <iostream>
 #include <sstream>
 
 namespace stats {
 
-std::string LineCategoryToString(LineCategory line_category) {
-    std::stringstream context;
+auto LineCategoryToString(LineCategory line_category) -> std::string {
+    auto context = std::stringstream{};
     if (line_category == 0) {
         context << "blank ";
     }
@@ -24,12 +24,12 @@ std::string LineCategoryToString(LineCategory line_category) {
     return context.str();
 }
 
-std::string AnalysisResult::to_string() const {
-    std::stringstream context;
-    for (size_t i = 0; i < line_category.size(); i++) {
+auto AnalysisResult::ToString() const -> std::string {
+    auto context = std::stringstream{};
+    for (auto i = size_t{0}; i < line_categories.size(); ++i) {
         context << i + 1 << " : "
                 << LineCategoryToString(
-                       static_cast<LineCategory>(line_category[i]))
+                       static_cast<LineCategory>(line_categories[i]))
                 << std::endl;
     }
     context << "path: " << path << std::endl;
@@ -40,24 +40,24 @@ std::string AnalysisResult::to_string() const {
     return context.str();
 }
 
-void AnalysisResult::clear() noexcept {
+auto AnalysisResult::Clear() noexcept -> void {
     path.clear();
     line_count = 0;
     code_count = 0;
     blank_count = 0;
-    annotation_count = 0;
-    line_category.clear();
+    comment_count = 0;
+    line_categories.clear();
 }
 
-void AnalysisResult::statistics() noexcept {
-    line_count = line_category.size();
-    for (const auto& category : line_category) {
+auto AnalysisResult::Statistics() noexcept -> void {
+    line_count = line_categories.size();
+    for (const auto& category : line_categories) {
         if (category == 0)
             ++blank_count;
         if (static_cast<uint>(category) &
             (static_cast<uint>(LineCategory::kBlockComment) |
              static_cast<uint>(LineCategory::kLineComment)))
-            ++annotation_count;
+            ++comment_count;
         if (static_cast<uint>(category) &
             static_cast<uint>(LineCategory::kCode))
             ++code_count;

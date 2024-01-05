@@ -10,15 +10,13 @@ namespace stats {
 class CppAnalyzer : public CodeAnalyzer {
 
   public:
-    CppAnalyzer() = default;
-
+    CppAnalyzer();
     virtual ~CppAnalyzer() = default;
 
-  protected:
+  private:
     virtual auto SkipRawString(std::istream& is, std::string& line,
                                size_t offset) -> size_t override;
-
-    auto FindRawStringHead(const std::string_view& line, size_t offset)
+    auto GetRawStringTail(std::string_view const& line, size_t offset)
         -> std::string;
 };
 
