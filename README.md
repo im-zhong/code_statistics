@@ -25,6 +25,6 @@ stats... src/main.cpp
 files: 1
 lines: 7
 codes: 5 (71.43%)
-comments: 1 (14.29%)
+comments: 2 (28.57%)
 ```
 
