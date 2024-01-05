@@ -100,16 +100,22 @@ auto CodeAnalyzer::SetMultiLineCategory(size_t begin, size_t end,
 
 auto CodeAnalyzer::IsStringHead(std::string_view const& line, size_t offset)
     -> bool {
-    return line.substr(offset, 1) == std::string_view{"\'"} ||
-           line.substr(offset, 1) == std::string_view{"\""};
+    // construct the sub string and compare it is very slow
+    return line[offset] == '\'' || line[offset] == '\"';
 }
 
 auto CodeAnalyzer::IsRawStringHead(std::string_view const& line, size_t offset)
     -> bool {
-    return line.substr(offset, 2) == std::string_view{"R\""} ||
-           line.substr(offset, 2) == std::string_view{"r\""} ||
-           line.substr(offset, 2) == std::string_view{"R\'"} ||
-           line.substr(offset, 2) == std::string_view{"r\'"};
+    if (line[offset] == 'r' || line[offset] == 'R') {
+        if (line[offset + 1] == '\'' || line[offset + 1] == '\"') {
+            // the character before r must be a blank or at the front the line
+            // i.e. operator"" is not raw string head
+            if (offset == 0 || std::isspace(line[offset - 1])) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 auto CodeAnalyzer::IsLineCommentHead(std::string_view const& line,

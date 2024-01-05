@@ -8,6 +8,16 @@ namespace stats {
 
 CppAnalyzer::CppAnalyzer() : CodeAnalyzer("//", "/*", "*/") {}
 
+auto CppAnalyzer::IsLineCommentHead(std::string_view const& line, size_t offset)
+    -> bool {
+    return line[offset] == '/' && line[offset + 1] == '/';
+}
+
+auto CppAnalyzer::IsBlockCommentHead(std::string_view const& line,
+                                     size_t offset) -> bool {
+    return line[offset] == '/' && line[offset + 1] == '*';
+}
+
 auto CppAnalyzer::SkipRawString(std::istream& is, std::string& line,
                                 size_t offset) -> size_t {
     auto raw_string_tail = GetRawStringTail(line, offset);

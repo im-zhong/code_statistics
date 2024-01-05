@@ -14,6 +14,10 @@ class CppAnalyzer : public CodeAnalyzer {
     virtual ~CppAnalyzer() = default;
 
   private:
+    virtual auto IsLineCommentHead(std::string_view const& line, size_t offset)
+        -> bool override;
+    virtual auto IsBlockCommentHead(std::string_view const& line, size_t offset)
+        -> bool override;
     virtual auto SkipRawString(std::istream& is, std::string& line,
                                size_t offset) -> size_t override;
     auto GetRawStringTail(std::string_view const& line, size_t offset)

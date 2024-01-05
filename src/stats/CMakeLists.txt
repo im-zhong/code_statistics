@@ -20,7 +20,9 @@ add_executable(test_stats
     test/test_stats.cpp
 )
 target_link_libraries(test_stats
+    PRIVATE conf
     PRIVATE stats
+    PRIVATE driver
     PRIVATE doctest::doctest
     PRIVATE fmt::fmt
 )

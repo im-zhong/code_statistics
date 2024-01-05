@@ -1,13 +1,15 @@
 // 2024/1/3
 // zhangzhong
 
-#include "stats/analysis_result.hpp"
-#include <memory>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "conf/conf.hpp"
+#include "driver/driver.hpp"
+#include "stats/analysis_result.hpp"
 #include "stats/cpp_analyzer.hpp"
 #include "stats/python_analyzer.hpp"
 #include <doctest/doctest.h>
 #include <fmt/core.h>
+#include <memory>
 #include <sstream>
 
 auto ResultToString(std::shared_ptr<stats::AnalysisResult> result) {
@@ -200,3 +202,26 @@ TEST_CASE("#bug3: test python file") {
                "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
                "lispy.txt");
 }
+
+TEST_CASE("#bug4: test cpp file") {
+    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+                     "goldens/string.hpp"};
+    auto analyzer = stats::MakeCppAnalyzer();
+    auto result = analyzer->Analyze(path);
+    result->Statistics();
+    // PrintResult(result);
+    TestGolden(ResultToString(result),
+               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
+               "string.txt");
+}
+
+// TEST_CASE("#perf1: boost") {
+//     std::string path{"/data/zhangzhong/src/boost"};
+//     auto language = std::string{"cpp"};
+//     auto conf = conf::MakeConf();
+//     conf->AddLoadPath(path);
+//     conf->AddLanguage(language);
+
+//     auto driver = driver::Driver(conf, stats::MakeCodeAnalyzer(language));
+//     driver.Run();
+// }
