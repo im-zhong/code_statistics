@@ -6,7 +6,6 @@
 #include "stats/analysis_result.hpp"
 #include <cstddef>
 #include <ctime>
-
 #include <iostream>
 #include <istream>
 #include <memory>

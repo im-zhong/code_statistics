@@ -1,6 +1,8 @@
 // 2024/1/3
 // zhangzhong
 
+#pragma once
+
 #include "stats/code_analyzer.hpp"
 #include <memory>
 
