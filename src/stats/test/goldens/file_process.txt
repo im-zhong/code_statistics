@@ -1,9 +1,9 @@
 1 : line comment 
 2 : line comment 
-3 : block comment 
-4 : block comment 
-5 : block comment 
-6 : block comment 
+3 : code 
+4 : code 
+5 : code 
+6 : code 
 7 : blank 
 8 : code 
 9 : code 
@@ -16,10 +16,10 @@
 16 : code 
 17 : code 
 18 : code 
-19 : block comment 
-20 : block comment 
-21 : block comment 
-22 : block comment 
+19 : code 
+20 : code 
+21 : code 
+22 : code 
 23 : code 
 24 : code 
 25 : code 
@@ -42,20 +42,20 @@
 42 : blank 
 43 : code 
 44 : code 
-45 : block comment 
-46 : block comment 
-47 : block comment 
-48 : block comment 
+45 : code 
+46 : code 
+47 : code 
+48 : code 
 49 : code 
 50 : blank 
 51 : code 
-52 : block comment 
-53 : block comment 
-54 : block comment 
-55 : block comment 
-56 : block comment 
-57 : block comment 
-58 : block comment 
+52 : code 
+53 : code 
+54 : code 
+55 : code 
+56 : code 
+57 : code 
+58 : code 
 59 : code 
 60 : line comment code 
 61 : code 
@@ -77,10 +77,10 @@
 77 : code 
 78 : code 
 79 : code 
-80 : block comment 
-81 : block comment 
-82 : block comment 
-83 : block comment 
+80 : code 
+81 : code 
+82 : code 
+83 : code 
 84 : code 
 85 : line comment code 
 86 : code 
@@ -117,19 +117,19 @@
 117 : code 
 118 : code 
 119 : code 
-120 : block comment 
-121 : block comment 
-122 : block comment 
-123 : block comment 
-124 : block comment 
-125 : block comment 
-126 : block comment 
-127 : block comment 
-128 : block comment 
-129 : block comment 
-130 : block comment 
-131 : block comment 
-132 : block comment 
+120 : code 
+121 : code 
+122 : code 
+123 : code 
+124 : code 
+125 : code 
+126 : code 
+127 : code 
+128 : code 
+129 : code 
+130 : code 
+131 : code 
+132 : code 
 133 : code 
 134 : code 
 135 : code 

@@ -65,8 +65,9 @@ auto PythonAnalyzer::SkipRawString(std::istream& is, std::string& line,
 auto PythonAnalyzer::SkipBlockComment(std::istream& is, std::string& line,
                                       size_t offset) -> size_t {
     auto delimiter = line.substr(offset, 3);
+    // actually python's ''' and """ should be consider as code, not comment
     return SkipUntilFindDelimiter(is, line, offset + delimiter.size(),
-                                  delimiter, LineCategory::kBlockComment);
+                                  delimiter, LineCategory::kCode);
 }
 
 auto MakePythonAnalyzer() -> std::shared_ptr<PythonAnalyzer> {

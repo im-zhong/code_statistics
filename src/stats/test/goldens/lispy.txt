@@ -276,7 +276,7 @@
 276 : code 
 277 : blank 
 278 : code 
-279 : block comment 
+279 : code 
 280 : code 
 281 : code 
 282 : code 
@@ -301,16 +301,16 @@
 301 : blank 
 302 : line comment code 
 303 : blank 
-304 : block comment code 
-305 : block comment 
-306 : block comment 
-307 : block comment 
-308 : block comment 
-309 : block comment 
-310 : block comment 
-311 : block comment 
-312 : block comment 
-313 : block comment code 
+304 : code 
+305 : code 
+306 : code 
+307 : code 
+308 : code 
+309 : code 
+310 : code 
+311 : code 
+312 : code 
+313 : code 
 314 : blank 
 315 : code 
 316 : code 
