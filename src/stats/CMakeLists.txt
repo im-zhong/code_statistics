@@ -7,6 +7,7 @@ add_library(stats STATIC
     src/code_analyzer.cpp
     src/rust_analyzer.cpp
     src/python_analyzer.cpp
+    src/all_analyzer.cpp
 )
 target_include_directories(stats 
     PUBLIC include

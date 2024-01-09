@@ -15,11 +15,13 @@ namespace stats {
 
 class CodeAnalyzer {
   public:
+    CodeAnalyzer() = default;
     CodeAnalyzer(std::string const& line_comment_head,
                  std::string const& block_comment_head,
                  std::string const& block_comment_tail);
 
-    auto Analyze(std::string const& path) -> std::shared_ptr<AnalysisResult>;
+    virtual auto Analyze(std::string const& path)
+        -> std::shared_ptr<AnalysisResult>;
     virtual auto Init() -> void;
     virtual std::shared_ptr<AnalysisResult> AnalyzeFile(std::istream& is);
 
@@ -54,8 +56,10 @@ class CodeAnalyzer {
                                         std::string_view const& delimiter,
                                         LineCategory line_category) -> size_t;
 
-  private:
+  public:
     std::shared_ptr<AnalysisResult> result_;
+
+  private:
     uint32_t line_begin_;
     uint32_t line_end_;
     std::string line_comment_head_;
