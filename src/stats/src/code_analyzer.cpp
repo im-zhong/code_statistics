@@ -2,6 +2,7 @@
 // zhangzhong
 
 #include "stats/code_analyzer.hpp"
+#include "stats/all_analyzer.hpp"
 #include "stats/cpp_analyzer.hpp"
 #include "stats/python_analyzer.hpp"
 #include "stats/rust_analyzer.hpp"
@@ -19,8 +20,8 @@ CodeAnalyzer::CodeAnalyzer(std::string const& line_comment_head,
                            std::string const& block_comment_tail)
     : result_{std::make_shared<AnalysisResult>()}, line_begin_{0}, line_end_{0},
       line_comment_head_{line_comment_head},
-      block_comment_head_{block_comment_head},
-      block_comment_tail_{block_comment_tail} {}
+      block_comment_head_{block_comment_head}, block_comment_tail_{
+                                                   block_comment_tail} {}
 
 auto CodeAnalyzer::Analyze(std::string const& path)
     -> std::shared_ptr<AnalysisResult> {
@@ -42,6 +43,7 @@ auto CodeAnalyzer::Init() -> void {
     result_ = std::make_shared<AnalysisResult>();
 }
 
+//分析一个文件的内容
 auto CodeAnalyzer::AnalyzeFile(std::istream& is)
     -> std::shared_ptr<AnalysisResult> {
     auto line = std::string{};
@@ -68,6 +70,7 @@ auto CodeAnalyzer::AnalyzeFile(std::istream& is)
     return result_;
 }
 
+//获取一行内容，并将offset置为0
 auto CodeAnalyzer::GetLineAndResetOffset(std::istream& is, std::string& line,
                                          size_t& offset) -> std::istream& {
     if (std::getline(is, line)) {
@@ -238,11 +241,13 @@ auto CodeAnalyzer::SkipUntilFindDelimiter(std::istream& is, std::string& line,
 auto MakeCodeAnalyzer(std::string const& language)
     -> std::shared_ptr<CodeAnalyzer> {
     if (language == "cpp") {
-        return std::make_shared<CppAnalyzer>();
+        return MakeCppAnalyzer();
     } else if (language == "rust") {
-        return std::make_shared<RustAnalyzer>();
+        return MakeRustAnalyzer();
     } else if (language == "python") {
-        return std::make_shared<PythonAnalyzer>();
+        return MakePythonAnalyzer();
+    } else if (language == "all") {
+        return MakeAllAnalyzer();
     }
     return nullptr;
 }

@@ -132,7 +132,7 @@ int main() {
 }
 
 TEST_CASE("simple cpp file") {
-    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/src/"
+    std::string path{"../../../../src/stats/src/"
                      "cpp_analyzer.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
@@ -140,7 +140,7 @@ TEST_CASE("simple cpp file") {
 }
 
 TEST_CASE("test raw string") {
-    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+    std::string path{"../../../../src/stats/test/"
                      "test_stats.cpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
@@ -163,65 +163,60 @@ int main() {})";
 }
 
 TEST_CASE("test simple python file") {
-    std::string path{"/data/zhangzhong/src/code_statistics/conanfile.py"};
+    std::string path{"../../../../conanfile.py"};
     auto analyzer = stats::MakePythonAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
 }
 
 TEST_CASE("#bug1: test python file") {
-    std::string path{
-        "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
-        "stance_predict.py"};
+    std::string path{"../../../../src/stats/test/goldens/"
+                     "stance_predict.py"};
     auto analyzer = stats::MakePythonAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
-    TestGolden(ResultToString(result),
-               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
-               "stance_predict.txt");
+    TestGolden(ResultToString(result), "../../../../src/stats/test/goldens/"
+                                       "stance_predict.txt");
 }
 
 TEST_CASE("#bug2: test python file") {
-    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+    std::string path{"../../../../src/stats/test/"
                      "goldens/file_process.py"};
     auto analyzer = stats::MakePythonAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
-    TestGolden(ResultToString(result),
-               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
-               "file_process.txt");
+    TestGolden(ResultToString(result), "../../../../src/stats/test/goldens/"
+                                       "file_process.txt");
 }
 
 TEST_CASE("#bug3: test python file") {
-    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+    std::string path{"../../../../src/stats/test/"
                      "goldens/lispy.py"};
     auto analyzer = stats::MakePythonAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
-    TestGolden(ResultToString(result),
-               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
-               "lispy.txt");
+    TestGolden(ResultToString(result), "../../../../src/stats/test/goldens/"
+                                       "lispy.txt");
 }
 
 TEST_CASE("#bug4: test cpp file") {
-    std::string path{"/data/zhangzhong/src/code_statistics/src/stats/test/"
+    std::string path{"../../../../src/stats/test/"
                      "goldens/string.hpp"};
     auto analyzer = stats::MakeCppAnalyzer();
     auto result = analyzer->Analyze(path);
     result->Statistics();
     // PrintResult(result);
-    TestGolden(ResultToString(result),
-               "/data/zhangzhong/src/code_statistics/src/stats/test/goldens/"
-               "string.txt");
+    TestGolden(ResultToString(result), "../../../../src/stats/test/goldens/"
+                                       "string.txt");
 }
 
-// TEST_CASE("#perf1: boost") {
-//     std::string path{"/data/zhangzhong/src/boost"};
-//     auto language = std::string{"cpp"};
-//     auto conf = conf::MakeConf();
-//     conf->AddLoadPath(path);
-//     conf->AddLanguage(language);
+TEST_CASE("test all analyzer") {
+    std::string path{"../../../../"};
+    auto language = std::string{"all"};
+    auto conf = conf::MakeConf();
+    conf->AddLoadPath(path);
+    conf->AddLanguage(language);
 
-//     auto driver = driver::Driver(conf, stats::MakeCodeAnalyzer(language));
-//     driver.Run();
-// }
+    auto driver = driver::Driver(conf, stats::MakeCodeAnalyzer(language));
+    driver.Run();
+}
