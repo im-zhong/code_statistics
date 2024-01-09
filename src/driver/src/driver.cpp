@@ -16,10 +16,13 @@ auto Driver::Run() -> void {
     PrintResults();
 }
 
+//遍历conf_中的所有路径，分析每个路径所指向的文件
 auto Driver::RunImpl() -> void {
     for (auto& path : conf_->GetLoadPaths()) {
         if (fs::is_directory(path)) {
+            //fs::recursive_directory_iterator 是一个迭代器，它可以递归地遍历一个目录及其所有子目录中的所有文件和子目录
             for (auto& entry : fs::recursive_directory_iterator(path)) {
+                //fs::is_regular_file(entry) 检查 entry 是否是一个常规文件（不是目录或其他特殊类型的文件）
                 if (fs::exists(entry) && fs::is_regular_file(entry)) {
                     AnalyzePath(entry.path());
                 }
@@ -30,7 +33,9 @@ auto Driver::RunImpl() -> void {
     }
 }
 
+//分析path所指向的文件
 auto Driver::AnalyzePath(const fs::path& path) -> void {
+    //path.extension() 它返回 path 的扩展名     对于文件名 "example.txt"，扩展名是 ".txt"
     if (!FilterExtension(path.extension().string()))
         return;
     auto result = analyzer_->Analyze(path);
@@ -38,6 +43,7 @@ auto Driver::AnalyzePath(const fs::path& path) -> void {
     result->Statistics();
 }
 
+//判断文件的后缀名是否在extensions_中.
 auto Driver::FilterExtension(std::string const& extension) -> bool {
     for (const auto& valid_extension : conf_->GetExtensions()) {
         if (extension == valid_extension)
@@ -46,6 +52,7 @@ auto Driver::FilterExtension(std::string const& extension) -> bool {
     return false;
 }
 
+//打印结果
 auto Driver::PrintResults() -> void {
     auto all_file_count = size_t{0};
     auto all_line_count = size_t{0};
