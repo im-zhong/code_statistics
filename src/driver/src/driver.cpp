@@ -92,9 +92,7 @@ auto Driver::PrintResults() -> void {
             rust_comment_count += result->comment_count;
         }
     }
-    if (cpp_line_count == 0) {
-        fmt::println("no cpp files");
-    } else {
+    if (cpp_line_count != 0) {
         fmt::println(
             "\ncpp files: {}\ncpp lines: {}\ncpp codes: {} ({:.2f}%)\ncpp "
             "comments: {} ({:.2f}%)\n",
@@ -103,9 +101,7 @@ auto Driver::PrintResults() -> void {
             cpp_comment_count,
             static_cast<double>(cpp_comment_count) / cpp_line_count * 100);
     }
-    if (python_line_count == 0) {
-        fmt::println("no python files");
-    } else {
+    if (python_line_count != 0) {
         fmt::println("python files: {}\npython lines: {}\npython codes: {} "
                      "({:.2f}%)\npython comments: {} "
                      "({:.2f}%)\n",
@@ -116,9 +112,7 @@ auto Driver::PrintResults() -> void {
                      static_cast<double>(python_comment_count) /
                          python_line_count * 100);
     }
-    if (rust_line_count == 0) {
-        fmt::println("no rust files");
-    } else {
+    if (rust_line_count != 0) {
         fmt::println(
             "rust files: {}\nrust lines: {}\nrust codes: {} "
             "({:.2f}%)\nrust comments: {} "
