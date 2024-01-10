@@ -2,6 +2,7 @@
 // zhangzhong
 
 #include "driver/driver.hpp"
+
 #include <fmt/core.h>
 
 namespace driver {
@@ -91,31 +92,42 @@ auto Driver::PrintResults() -> void {
             rust_comment_count += result->comment_count;
         }
     }
-
-    fmt::println("cpp files: {}\ncpp lines: {}\ncpp codes: {} ({:.2f}%)\ncpp "
-                 "comments: {} ({:.2f}%)\n",
-                 cpp_file_count, cpp_line_count, cpp_code_count,
-                 static_cast<double>(cpp_code_count) / cpp_line_count * 100,
-                 cpp_comment_count,
-                 static_cast<double>(cpp_comment_count) / cpp_line_count * 100);
-
-    fmt::println(
-        "python files: {}\npython lines: {}\npython codes: {} "
-        "({:.2f}%)\npython comments: {} "
-        "({:.2f}%)\n",
-        python_file_count, python_line_count, python_code_count,
-        static_cast<double>(python_code_count) / python_line_count * 100,
-        python_comment_count,
-        static_cast<double>(python_comment_count) / python_line_count * 100);
-
-    fmt::println("rust files: {}\nrust lines: {}\nrust codes: {} "
-                 "({:.2f}%)\nrust comments: {} "
-                 "({:.2f}%)",
-                 rust_file_count, rust_line_count, rust_code_count,
-                 static_cast<double>(rust_code_count) / rust_line_count * 100,
-                 rust_comment_count,
-                 static_cast<double>(rust_comment_count) / rust_line_count *
-                     100);
+    if (cpp_line_count == 0) {
+        fmt::println("no cpp files");
+    } else {
+        fmt::println(
+            "\ncpp files: {}\ncpp lines: {}\ncpp codes: {} ({:.2f}%)\ncpp "
+            "comments: {} ({:.2f}%)\n",
+            cpp_file_count, cpp_line_count, cpp_code_count,
+            static_cast<double>(cpp_code_count) / cpp_line_count * 100,
+            cpp_comment_count,
+            static_cast<double>(cpp_comment_count) / cpp_line_count * 100);
+    }
+    if (python_line_count == 0) {
+        fmt::println("no python files");
+    } else {
+        fmt::println("python files: {}\npython lines: {}\npython codes: {} "
+                     "({:.2f}%)\npython comments: {} "
+                     "({:.2f}%)\n",
+                     python_file_count, python_line_count, python_code_count,
+                     static_cast<double>(python_code_count) /
+                         python_line_count * 100,
+                     python_comment_count,
+                     static_cast<double>(python_comment_count) /
+                         python_line_count * 100);
+    }
+    if (rust_line_count == 0) {
+        fmt::println("no rust files");
+    } else {
+        fmt::println(
+            "rust files: {}\nrust lines: {}\nrust codes: {} "
+            "({:.2f}%)\nrust comments: {} "
+            "({:.2f}%)",
+            rust_file_count, rust_line_count, rust_code_count,
+            static_cast<double>(rust_code_count) / rust_line_count * 100,
+            rust_comment_count,
+            static_cast<double>(rust_comment_count) / rust_line_count * 100);
+    }
 }
 
 } // namespace driver
