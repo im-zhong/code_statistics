@@ -5,6 +5,9 @@
 
 #include "conf/conf.hpp"
 #include "stats/code_analyzer.hpp"
+#include "stats/cpp_analyzer.hpp"
+#include "stats/python_analyzer.hpp"
+#include "stats/rust_analyzer.hpp"
 #include <list>
 #include <memory>
 
@@ -29,6 +32,9 @@ class Driver {
     std::shared_ptr<conf::Conf> conf_;
     std::shared_ptr<stats::CodeAnalyzer> analyzer_;
     std::shared_ptr<GlobalAnalysisResult> results_;
+    std::shared_ptr<stats::PythonAnalyzer> python_analyzer_;
+    std::shared_ptr<stats::CppAnalyzer> cpp_analyzer_;
+    std::shared_ptr<stats::RustAnalyzer> rust_analyzer_;
 };
 
 } // namespace driver
