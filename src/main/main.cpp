@@ -17,10 +17,10 @@ int main(int argc, const char* argv[]) {
     app.add_option("path", path, "Path to analyze")->required();
 
     auto language = std::string{"all"};
-    app.add_option(
-        "-l,--language", language,
-        "Language to analyze, support [cpp], [rust], [python], [all] and "
-        "default is all");
+    app.add_option("-l,--language", language,
+                   "Language to analyze, support [cpp], [rust], [python], "
+                   "[typescript], [all] and "
+                   "default is all");
 
     try {
         app.parse(argc, argv);

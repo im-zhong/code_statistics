@@ -29,7 +29,10 @@ class Conf {
         {{"cpp", {".h", ".hpp", ".c", ".cpp", ".cc", ".cxx", ".hxx"}},
          {"rust", {".rs"}},
          {"python", {".py"}},
-         {"all",{".h", ".hpp", ".c", ".cpp", ".cc", ".cxx", ".hxx", ".rs", ".py"}}};
+         {"ts", {".ts", ".tsx"}},
+         {"all",
+          {".h", ".hpp", ".c", ".cpp", ".cc", ".cxx", ".hxx", ".rs", ".py",
+           ".ts", ".tsx"}}};
 };
 
 auto MakeConf() -> std::shared_ptr<Conf>;
